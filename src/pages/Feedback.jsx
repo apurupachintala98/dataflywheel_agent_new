@@ -288,7 +288,7 @@ const Feedback = ({ message }) => {
 const SQLCodeBlock = ({ code }) => {
   return (
     <div className="border rounded-lg overflow-hidden shadow-sm">
-      <div className="bg-gray-100 px-3 py-2 text-sm font-b border-b">
+      <div className="bg-gray-100 px-3 py-2 text-sm font-weight-bold border-b">
         Generated SQL
       </div>
       <SyntaxHighlighter
@@ -343,33 +343,52 @@ const MessageWithFeedback = ({ message }) => {
               //     </AccordionContent>
               //   </AccordionItem>
               // </Accordion>
-      <Accordion
-  type="single"
-  collapsible
-  value={detailsOpen ? "thinking" : undefined}
-  onValueChange={(val) => setDetailsOpen(Boolean(val))}
->
-  <AccordionItem value="thinking">
-    <AccordionTrigger
-      className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
-                 border border-gray-300 rounded-md bg-white
-                 hover:bg-gray-100 flex items-center gap-2 transition"
+   <Accordion
+      type="single"
+      collapsible
+      value={detailsOpen ? "thinking" : undefined}
+      onValueChange={(val) => setDetailsOpen(val === "thinking")}
+      className="rounded-lg border bg-gray-50 shadow-sm transition-colors"
     >
-      <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+      <AccordionItem value="thinking">
+        <AccordionTrigger
+          className="w-full px-3 py-2 text-sm font-medium text-gray-700
+                     flex items-center justify-between
+                     rounded-md bg-white hover:bg-gray-100
+                     border-b transition-colors"
+        >
+          {/* Toggle text with fade animation */}
+          <span
+            className={`transition-opacity duration-300 ${
+              detailsOpen ? "opacity-0 absolute" : "opacity-100"
+            }`}
+          >
+            Show Details
+          </span>
+          <span
+            className={`transition-opacity duration-300 ${
+              detailsOpen ? "opacity-100" : "opacity-0 absolute"
+            }`}
+          >
+            Hide Details
+          </span>
 
-      {/* <ChevronDown
-        className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
-          detailsOpen ? "rotate-180" : ""
-        }`}
-        aria-hidden
-      /> */}
-    </AccordionTrigger>
+          <ChevronDown
+            className={`ml-2 h-4 w-4 shrink-0 text-gray-500 transition-transform duration-300 ${
+              detailsOpen ? "rotate-180" : ""
+            }`}
+          />
+        </AccordionTrigger>
 
-    <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
-      {message.thinking}
-    </AccordionContent>
-  </AccordionItem>
-</Accordion>
+        <AccordionContent
+          className="px-3 py-3 text-sm text-gray-600
+                     bg-gray-50 rounded-b-md
+                     transition-all duration-300"
+        >
+          {message.thinking}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
 
             )}
 

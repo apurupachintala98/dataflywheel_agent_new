@@ -17,7 +17,7 @@ import { FirstMessageCon, SecondMessageCon, MessageContainer } from "./styled.co
 import DataFlyWheelLogo from "assests/images/loadingBlack.png";
 import { useSelectedApp } from "components/SelectedAppContext";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion"
-
+import { ChevronDown } from "lucide-react";
 
 const Feedback = ({ message }) => {
   const { selectedAppId } = useSelectedApp();
@@ -311,6 +311,7 @@ const SQLCodeBlock = ({ code }) => {
 // ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
   const isUser = message.fromUser;
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   return (
     <div
@@ -342,19 +343,26 @@ const MessageWithFeedback = ({ message }) => {
               //     </AccordionContent>
               //   </AccordionItem>
               // </Accordion>
-              <Accordion type="single" collapsible>
+      <Accordion
+  type="single"
+  collapsible
+  value={detailsOpen ? "thinking" : undefined}
+  onValueChange={(val) => setDetailsOpen(Boolean(val))}
+>
   <AccordionItem value="thinking">
     <AccordionTrigger
-      className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700 
-                 border border-gray-300 rounded-md bg-white 
+      className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+                 border border-gray-300 rounded-md bg-white
                  hover:bg-gray-100 flex items-center gap-2 transition"
     >
-      {/* Default text */}
-      <span className="group-data-[state=open]:hidden">Show Details</span>
-      {/* Text when open */}
-      <span className="hidden group-data-[state=open]:inline">Hide Details</span>
+      <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
 
-      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+      <ChevronDown
+        className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
+          detailsOpen ? "rotate-180" : ""
+        }`}
+        aria-hidden
+      />
     </AccordionTrigger>
 
     <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">

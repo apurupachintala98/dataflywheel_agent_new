@@ -288,7 +288,7 @@ const Feedback = ({ message }) => {
 const SQLCodeBlock = ({ code }) => {
   return (
     <div className="border rounded-lg overflow-hidden shadow-sm">
-      <div className="bg-gray-100 px-3 py-2 text-sm font-semibold border-b">
+      <div className="bg-gray-100 px-3 py-2 text-sm font-b border-b">
         Generated SQL
       </div>
       <SyntaxHighlighter
@@ -334,14 +334,35 @@ const MessageWithFeedback = ({ message }) => {
         
 
             {message.thinking && !message.isStreaming && (
+              // <Accordion type="single" collapsible>
+              //   <AccordionItem value="thinking">
+              //     <AccordionTrigger>Show Details</AccordionTrigger>
+              //     <AccordionContent>
+              //       {message.thinking}
+              //     </AccordionContent>
+              //   </AccordionItem>
+              // </Accordion>
               <Accordion type="single" collapsible>
-                <AccordionItem value="thinking">
-                  <AccordionTrigger>Show Details</AccordionTrigger>
-                  <AccordionContent>
-                    {message.thinking}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+  <AccordionItem value="thinking">
+    <AccordionTrigger
+      className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700 
+                 border border-gray-300 rounded-md bg-white 
+                 hover:bg-gray-100 flex items-center gap-2 transition"
+    >
+      {/* Default text */}
+      <span className="group-data-[state=open]:hidden">Show Details</span>
+      {/* Text when open */}
+      <span className="hidden group-data-[state=open]:inline">Hide Details</span>
+
+      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+    </AccordionTrigger>
+
+    <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
+      {message.thinking}
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+
             )}
 
 

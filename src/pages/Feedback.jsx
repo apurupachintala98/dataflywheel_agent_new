@@ -346,9 +346,8 @@ const MessageWithFeedback = ({ message }) => {
       <Accordion
   type="single"
   collapsible
-  value={detailsOpen ? "thinking" : undefined}
   onValueChange={(val) => setDetailsOpen(val === "thinking")}
-
+   className="border rounded-md bg-white shadow-sm"
 >
   <AccordionItem value="thinking">
     <AccordionTrigger

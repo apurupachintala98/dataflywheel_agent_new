@@ -357,12 +357,12 @@ const MessageWithFeedback = ({ message }) => {
     >
       <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
 
-      <ChevronDown
+      {/* <ChevronDown
         className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
           detailsOpen ? "rotate-180" : ""
         }`}
         aria-hidden
-      />
+      /> */}
     </AccordionTrigger>
 
     <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">

@@ -343,52 +343,27 @@ const MessageWithFeedback = ({ message }) => {
               //     </AccordionContent>
               //   </AccordionItem>
               // </Accordion>
-   <Accordion
-      type="single"
-      collapsible
-      value={detailsOpen ? "thinking" : undefined}
-      onValueChange={(val) => setDetailsOpen(val === "thinking")}
-      className="rounded-lg border bg-gray-50 shadow-sm transition-colors"
+      <Accordion
+  type="single"
+  collapsible
+  value={detailsOpen ? "thinking" : undefined}
+  onValueChange={(val) => setDetailsOpen(val === "thinking")}
+
+>
+  <AccordionItem value="thinking">
+    <AccordionTrigger
+      className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+                 border border-gray-300 rounded-md bg-white
+                 hover:bg-gray-100 flex items-center gap-2 transition"
     >
-      <AccordionItem value="thinking">
-        <AccordionTrigger
-          className="w-full px-3 py-2 text-sm font-medium text-gray-700
-                     flex items-center justify-between
-                     rounded-md bg-white hover:bg-gray-100
-                     border-b transition-colors"
-        >
-          {/* Toggle text with fade animation */}
-          <span
-            className={`transition-opacity duration-300 ${
-              detailsOpen ? "opacity-0 absolute" : "opacity-100"
-            }`}
-          >
-            Show Details
-          </span>
-          <span
-            className={`transition-opacity duration-300 ${
-              detailsOpen ? "opacity-100" : "opacity-0 absolute"
-            }`}
-          >
-            Hide Details
-          </span>
+      <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+    </AccordionTrigger>
 
-          <ChevronDown
-            className={`ml-2 h-4 w-4 shrink-0 text-gray-500 transition-transform duration-300 ${
-              detailsOpen ? "rotate-180" : ""
-            }`}
-          />
-        </AccordionTrigger>
-
-        <AccordionContent
-          className="px-3 py-3 text-sm text-gray-600
-                     bg-gray-50 rounded-b-md
-                     transition-all duration-300"
-        >
-          {message.thinking}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+    <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
+      {message.thinking}
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
 
             )}
 

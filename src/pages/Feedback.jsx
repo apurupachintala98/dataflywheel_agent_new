@@ -382,9 +382,9 @@ const MessageWithFeedback = ({ message }) => {
             {/* SQL code block */}
             {message.sql && <SQLCodeBlock code={message.sql} />}
 
-            {msg.chart && (
+            {message.chart && (
               <Box sx={{ my: 2 }}>
-                <VegaLite spec={JSON.parse(msg.chart)} />
+                <VegaLite spec={JSON.parse(message.chart)} />
               </Box>
             )}
 

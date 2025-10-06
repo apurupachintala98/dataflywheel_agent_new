@@ -239,6 +239,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
     let streamingThinking = ""
     let streamingText = ""
     let sqlContent = ""
+    let chartSpec = ""
     let finalThinking = ""
     let finalText = ""
 
@@ -284,6 +285,18 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             if (data.content && data.content[0] && data.content[0].json && data.content[0].json.sql) {
               sqlContent = data.content[0].json.sql
             }
+
+            // ✅ If Vega chart present
+            if (data.content[0].json.charts && data.content[0].json.charts.length > 0) {
+              chartSpec = data.content[0].json.charts[0];
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === messageId
+                    ? { ...msg, chart: chartSpec, sql: sqlContent }
+                    : msg
+                )
+              );
+            }
             break
 
           case "response.text.delta":
@@ -303,6 +316,12 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             if (data.content) {
               const thinkingContent = data.content.find((item: any) => item.type === "thinking")
               const textContent = data.content.find((item: any) => item.type === "text")
+              const chartContent = data.content.find((item: any) => item.type === "chart")
+
+            if (chartContent?.chart?.chart_spec) {
+              chartSpec = chartContent.chart.chart_spec;
+            }
+
 
               setMessages((prev) =>
                 prev.map((msg) =>
@@ -312,6 +331,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                       thinking: thinkingContent?.thinking?.text || finalThinking,
                       content: textContent?.text || finalText,
                       sql: sqlContent,
+                      chart: chartSpec,
                       isStreaming: false,
                       showDetails: false,
                     }

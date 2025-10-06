@@ -320,8 +320,8 @@ const MessageWithFeedback = ({ message }) => {
     >
       <div
         className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-md ${isUser
-            ? "bg-blue-500 text-white rounded-br-none"
-            : "bg-white text-gray-900 border border-gray-200 rounded-bl-none"
+          ? "bg-blue-500 text-white rounded-br-none"
+          : "bg-white text-gray-900 border border-gray-200 rounded-bl-none"
           }`}
       >
         {/* USER MESSAGE */}
@@ -332,7 +332,7 @@ const MessageWithFeedback = ({ message }) => {
         {/* ASSISTANT MESSAGE */}
         {!isUser && (
           <div className="space-y-4 text-sm">
-        
+
 
             {message.thinking && !message.isStreaming && (
               // <Accordion type="single" collapsible>
@@ -343,26 +343,26 @@ const MessageWithFeedback = ({ message }) => {
               //     </AccordionContent>
               //   </AccordionItem>
               // </Accordion>
-      <Accordion
-  type="single"
-  collapsible
-  onValueChange={(val) => setDetailsOpen(val === "thinking")}
-   className="border rounded-md bg-white shadow-sm"
->
-  <AccordionItem value="thinking">
-    <AccordionTrigger
-      className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+              <Accordion
+                type="single"
+                collapsible
+                onValueChange={(val) => setDetailsOpen(val === "thinking")}
+                className="border rounded-md bg-white shadow-sm"
+              >
+                <AccordionItem value="thinking">
+                  <AccordionTrigger
+                    className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
                  border border-gray-300 rounded-md bg-white
                  hover:bg-gray-100 flex items-center gap-2 transition"
-    >
-      <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
-    </AccordionTrigger>
+                  >
+                    <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+                  </AccordionTrigger>
 
-    <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
-      {message.thinking}
-    </AccordionContent>
-  </AccordionItem>
-</Accordion>
+                  <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
+                    {message.thinking}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
             )}
 
@@ -381,6 +381,13 @@ const MessageWithFeedback = ({ message }) => {
 
             {/* SQL code block */}
             {message.sql && <SQLCodeBlock code={message.sql} />}
+
+            {msg.chart && (
+              <Box sx={{ my: 2 }}>
+                <VegaLite spec={JSON.parse(msg.chart)} />
+              </Box>
+            )}
+
 
             {/* Assistant text */}
             {message.content && (

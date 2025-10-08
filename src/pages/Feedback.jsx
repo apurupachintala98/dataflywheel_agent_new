@@ -18,6 +18,7 @@ import DataFlyWheelLogo from "assests/images/loadingBlack.png";
 import { useSelectedApp } from "components/SelectedAppContext";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion"
 import { ChevronDown } from "lucide-react";
+import { VegaLite } from 'react-vega';
 
 const Feedback = ({ message }) => {
   const { selectedAppId } = useSelectedApp();
@@ -328,6 +329,7 @@ const MessageWithFeedback = ({ message }) => {
         {isUser && (
           <div className="whitespace-pre-wrap text-sm">{message.text}</div>
         )}
+       
 
         {/* ASSISTANT MESSAGE */}
         {!isUser && (
@@ -335,14 +337,7 @@ const MessageWithFeedback = ({ message }) => {
 
 
             {message.thinking && !message.isStreaming && (
-              // <Accordion type="single" collapsible>
-              //   <AccordionItem value="thinking">
-              //     <AccordionTrigger>Show Details</AccordionTrigger>
-              //     <AccordionContent>
-              //       {message.thinking}
-              //     </AccordionContent>
-              //   </AccordionItem>
-              // </Accordion>
+
               <Accordion
                 type="single"
                 collapsible
@@ -379,7 +374,7 @@ const MessageWithFeedback = ({ message }) => {
               </div>
             )}
 
-            {/* SQL code block */}
+
             {message.sql && <SQLCodeBlock code={message.sql} />}
 
             {message.chart && (
@@ -389,7 +384,7 @@ const MessageWithFeedback = ({ message }) => {
             )}
 
 
-            {/* Assistant text */}
+
             {message.content && (
               <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
                 {message.content}
@@ -400,6 +395,7 @@ const MessageWithFeedback = ({ message }) => {
             )}
           </div>
         )}
+       
       </div>
     </div>
   );

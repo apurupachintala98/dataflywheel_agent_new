@@ -34,7 +34,7 @@ export const config = (
       CORTEX_SEARCH: "search_details",
       CORTEX_ANALYST: "analyst_details",
       TEXT_TO_SQL: "txt2sql",
-      AGENT: "agent",
+      AGENT: "agent_v2",
       RUN_SQL_QUERY: "txt2sql/run_sql_query",
       CORTEX_COMPLETE: "complete",
       UPLOAD_URL: "upload_file/",

@@ -8,7 +8,7 @@ type BasePayloadParams = {
   stage_nm?: string;
   user_nm?: string;
   user_pwd?: string;
-   app_lvl_prefix?: string;
+  app_lvl_prefix?: string;
 };
 
 type MinimalPayloadParams = BasePayloadParams & {
@@ -50,6 +50,8 @@ export const buildPayload = (params: MinimalPayloadParams | FullPayloadParams & 
   } = APP_CONFIG;
 
   const appLvlPrefix = (params as any).app_lvl_prefix || defaultAppLvlPrefix;
+  const user_id = "Agent_User";
+  const cnvrstn_chat_lmt_txt = "string";
 
   if ("minimal" in params && params.minimal) {
     const { prompt, execSQL } = params;
@@ -58,6 +60,8 @@ export const buildPayload = (params: MinimalPayloadParams | FullPayloadParams & 
         aplctn_cd: aplctnCdValue,
         app_id: APP_ID,
         api_key: API_KEY,
+        user_id,
+        cnvrstn_chat_lmt_txt,
         prompt: {
           messages: [{ role: "user", content: prompt }],
         },
@@ -90,6 +94,8 @@ export const buildPayload = (params: MinimalPayloadParams | FullPayloadParams & 
       api_key: API_KEY,
       model,
       method,
+      user_id,
+      cnvrstn_chat_lmt_txt,
       semantic_model: semanticModel,
       search_service: searchModel,
       search_limit: 0,

@@ -314,95 +314,256 @@ const MessageWithFeedback = ({ message }) => {
   const isUser = message.fromUser;
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  return (
-    <div
-      className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"
-        }`}
-    >
-      <div
-        className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-md ${isUser
-          ? "bg-blue-500 text-white rounded-br-none"
-          : "bg-white text-gray-900 border border-gray-200 rounded-bl-none"
-          }`}
-      >
-        {/* USER MESSAGE */}
-        {isUser && (
-          <div className="whitespace-pre-wrap text-sm">{message.text}</div>
-        )}
-       
-
-        {/* ASSISTANT MESSAGE */}
-        {!isUser && (
-          <div className="space-y-4 text-sm">
-
-
-            {message.thinking && !message.isStreaming && (
-
-              <Accordion
-                type="single"
-                collapsible
-                onValueChange={(val) => setDetailsOpen(val === "thinking")}
-                className="border rounded-md bg-white shadow-sm"
-              >
-                <AccordionItem value="thinking">
-                  <AccordionTrigger
-                    className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
-                 border border-gray-300 rounded-md bg-white
-                 hover:bg-gray-100 flex items-center gap-2 transition"
-                  >
-                    <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
-                  </AccordionTrigger>
-
-                  <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
-                    {message.thinking}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-
-            )}
-
-
-            {message.thinking && message.isStreaming && (
-              <div className="border rounded-lg p-3 bg-gray-50">
-                <div className="text-sm font-medium mb-2 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                  Thinking...
-                </div>
-                <div className="text-gray-600 whitespace-pre-wrap">
-                  {message.thinking}
-                </div>
-              </div>
-            )}
-
-
-            {message.sql && <SQLCodeBlock code={message.sql} />}
-
-            {message.chart && (
-              <Box sx={{ my: 2 }}>
-                <VegaLite spec={JSON.parse(message.chart)} />
-              </Box>
-            )}
+//without border box - old code
+//   return (
+//     <div
+//       className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"
+//         }`}
+//     >
+//       <div
+//         className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-md ${isUser
+//           ? "bg-blue-500 text-white rounded-br-none"
+//           : "bg-white text-gray-900 border border-gray-200 rounded-bl-none"
+//           }`}
+//       >
+//         {/* USER MESSAGE */}
+//         {/* {isUser && (
+//           <div className="whitespace-pre-wrap text-sm">{message.text}</div>
+//         )} */}
+//         {isUser && (
+//           <div className="flex justify-end w-full my-3">
+//             <div className="bg-gray-100 text-black px-4 py-3 rounded-2xl max-w-[80%] whitespace-pre-wrap text-sm">
+//               {message.text}
+//             </div>
+//           </div>
+//         )}
 
 
 
-            {message.content && (
-              <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
-                {message.content}
-                {message.isStreaming && (
-                  <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse"></span>
-                )}
-              </div>
-            )}
+//         {/* ASSISTANT MESSAGE */}
+//         {/* {!isUser && (
+//           <div className="space-y-4 text-sm">
+
+
+//             {message.thinking && !message.isStreaming && (
+
+//               <Accordion
+//                 type="single"
+//                 collapsible
+//                 onValueChange={(val) => setDetailsOpen(val === "thinking")}
+//                 className="border rounded-md bg-white shadow-sm"
+//               >
+//                 <AccordionItem value="thinking">
+//                   <AccordionTrigger
+//                     className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+//                  border border-gray-300 rounded-md bg-white
+//                  hover:bg-gray-100 flex items-center gap-2 transition"
+//                   >
+//                     <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+//                   </AccordionTrigger>
+
+//                   <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
+//                     {message.thinking}
+//                   </AccordionContent>
+//                 </AccordionItem>
+//               </Accordion>
+
+//             )}
+
+
+//             {message.thinking && message.isStreaming && (
+//               <div className="border rounded-lg p-3 bg-gray-50">
+//                 <div className="text-sm font-medium mb-2 flex items-center gap-2">
+//                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+//                   Thinking...
+//                 </div>
+//                 <div className="text-gray-600 whitespace-pre-wrap">
+//                   {message.thinking}
+//                 </div>
+//               </div>
+//             )}
+
+
+
+
+//             {message.sql && <SQLCodeBlock code={message.sql} />}
+
+//             {message.chart && (
+//               <Box sx={{ my: 2 }}>
+//                 <VegaLite spec={JSON.parse(message.chart)} />
+//               </Box>
+//             )}
+
+
+
+//             {message.content && (
+//               <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+//                 {message.content}
+//                 {message.isStreaming && (
+//                   <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse"></span>
+//                 )}
+//               </div>
+//             )}
+//           </div>
+//         )} */}
+//         {!isUser && (
+//   <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: "80%" }}>
+    
+//     {/* Thinking */}
+//     {message.thinking && (
+//       <Box
+//         sx={{
+//           border: "1px solid #ccc",
+//           borderRadius: "12px",
+//           padding: "12px",
+//           backgroundColor: "#f9f9f9",
+//         }}
+//       >
+//         <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1 }}>
+//           Thinking...
+//         </Typography>
+//         <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#555" }}>
+//           {message.thinking}
+//         </Typography>
+//       </Box>
+//     )}
+
+//     {/* Content */}
+//     {message.content && (
+//       <Box
+//         sx={{
+//           border: "1px solid #ccc",
+//           borderRadius: "12px",
+//           padding: "12px",
+//           backgroundColor: "#fff",
+//         }}
+//       >
+//         <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#333" }}>
+//           {message.content}
+//         </Typography>
+//       </Box>
+//     )}
+
+//     {/* SQL */}
+//     {message.sql && (
+//       <Box
+//         sx={{
+//           border: "1px solid #ccc",
+//           borderRadius: "12px",
+//           padding: "12px",
+//           backgroundColor: "#fff",
+//         }}
+//       >
+//         <SQLCodeBlock code={message.sql} />
+//       </Box>
+//     )}
+
+//     {/* Chart */}
+//     {message.chart && (
+//       <Box
+//         sx={{
+//           border: "1px solid #ccc",
+//           borderRadius: "12px",
+//           padding: "12px",
+//           backgroundColor: "#fff",
+//         }}
+//       >
+//         <VegaLite spec={JSON.parse(message.chart)} />
+//       </Box>
+//     )}
+//   </Box>
+// )}
+
+
+//       </div>
+//     </div>
+//   );
+return (
+  <div className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className="max-w-[80%]">
+      
+      {/* USER MESSAGE */}
+      {isUser && (
+        <div className="flex justify-end w-full">
+          <div className="bg-gray-100 text-black px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm">
+            {message.text}
           </div>
-        )}
-       
-      </div>
+        </div>
+      )}
+
+      {/* ASSISTANT MESSAGE */}
+      {!isUser && (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          
+          {/* Thinking */}
+          {message.thinking && (
+            <Box
+              sx={{
+                border: "1px solid #ccc",
+                borderRadius: "12px",
+                padding: "12px",
+                backgroundColor: "#f9f9f9",
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1 }}>
+                Thinking...
+              </Typography>
+              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#555" }}>
+                {message.thinking}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Content */}
+          {message.content && (
+            <Box
+              sx={{
+                border: "1px solid #ccc",
+                borderRadius: "12px",
+                padding: "12px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#333" }}>
+                {message.content}
+              </Typography>
+            </Box>
+          )}
+
+          {/* SQL */}
+          {message.sql && (
+            <Box
+              sx={{
+                border: "1px solid #ccc",
+                borderRadius: "12px",
+                padding: "12px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <SQLCodeBlock code={message.sql} />
+            </Box>
+          )}
+
+          {/* Chart */}
+          {message.chart && (
+            <Box
+              sx={{
+                border: "1px solid #ccc",
+                borderRadius: "12px",
+                padding: "12px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <VegaLite spec={JSON.parse(message.chart)} />
+            </Box>
+          )}
+        </Box>
+      )}
     </div>
-  );
+  </div>
+);
+
 };
-
-
-
 
 export default MessageWithFeedback;
 

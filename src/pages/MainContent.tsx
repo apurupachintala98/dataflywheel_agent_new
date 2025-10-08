@@ -39,7 +39,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 interface MainContentProps {
   messages: MessageType[];
   collapsed: boolean;
-   toggleSidebar: () => void; 
+  toggleSidebar: () => void;
   toggleDetails: (messageId: string) => void;
   inputValue: string;
   anchorEls: {
@@ -92,7 +92,7 @@ interface MainContentProps {
   >;
   setCheckIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   isLogOut: boolean;
-   isReset: boolean;
+  isReset: boolean;
 }
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -137,7 +137,7 @@ const MainContent = ({
   setUserPwd,
   setCheckIsLogin,
   isLogOut,
-   isReset,
+  isReset,
   vegaChartData,
   setVegaChartData,
 }: MainContentProps) => {
@@ -172,14 +172,14 @@ const MainContent = ({
   }, [messages]);
 
   useEffect(() => {
-  if (isReset) {
-    setEnvironment("");
-    setAppLvlPrefix("");
-    setSelectedSchema("");
-    setDbDetails({ database_nm: "", schema_nm: "" });
-    setFileLists({ yaml: [], search: [] });
-  }
-}, [isReset]);
+    if (isReset) {
+      setEnvironment("");
+      setAppLvlPrefix("");
+      setSelectedSchema("");
+      setDbDetails({ database_nm: "", schema_nm: "" });
+      setFileLists({ yaml: [], search: [] });
+    }
+  }, [isReset]);
 
   const handleGraphClick = () => {
     setChartOpen(true);
@@ -340,7 +340,7 @@ const MainContent = ({
                     anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
                     transformOrigin={{ vertical: "top", horizontal: "left" }}
                   >
-                    {(["DEV","SIT","PREPROD"] as const).map((env) => (
+                    {(["DEV", "SIT", "PREPROD"] as const).map((env) => (
                       <MenuItem
                         key={env}
                         onClick={() => {
@@ -687,6 +687,7 @@ const MainContent = ({
                   <Box
                     sx={{
                       display: "flex",
+                      // justifyContent: "flex-start", // Align to left
                       justifyContent: message.fromUser ? "flex-end" : "flex-start",
                     }}
                   >
@@ -705,20 +706,40 @@ const MainContent = ({
                     ) : (
                       <MessageWithFeedback
                         message={message}
-                        // executeSQL={executeSQL}
-                        // apiCortex={apiCortex}
-                        // handleGraphClick={handleGraphClick}
+                      // executeSQL={executeSQL}
+                      // apiCortex={apiCortex}
+                      // handleGraphClick={handleGraphClick}
                       />
                     )}
                   </Box>
                 </Box>
               ))}
-              {isLoading && (
+               {isLoading && (
                 <Box sx={{ display: "flex", justifyContent: "start", mt: 2 }}>
                   {/* <HashLoader color="#000000" size={20} /> */}
                   <Loader src={loading} alt="Loading..." />
                 </Box>
               )}
+              {/* {isLoading && (
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    marginTop: "8px",
+                    backgroundColor: "transparent",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Loader src={loading} alt="Thinking..." />
+                  <Typography variant="body2" sx={{ color: "#555" }}>
+                    Thinking...
+                  </Typography>
+                </Box>
+              )} */}
+
               <div id="scroll-anchor" style={{ height: 1 }} />
             </Box>
             <Box
@@ -977,6 +998,9 @@ const MainContent = ({
         <Dialog open={chartOpen} onClose={() => setChartOpen(false)} maxWidth="lg" fullWidth>
           <Chart chartData={vegaChartData} onClose={() => setChartOpen(false)} />
         </Dialog>
+        
+
+
       </Box>
     </>
   );

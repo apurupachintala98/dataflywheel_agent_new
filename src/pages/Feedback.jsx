@@ -427,8 +427,8 @@ const MessageWithFeedback = ({ message }) => {
         {!isUser && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
 
-        {/* Thinking */}
-        {/* {message.thinking && (
+            {/* Thinking */}
+            {/* {message.thinking && (
             <Box
               sx={{
                 border: "1px solid #ccc",
@@ -446,7 +446,7 @@ const MessageWithFeedback = ({ message }) => {
             </Box>
           )} */}
 
-         {message.thinking && (
+            {message.thinking && (
               <Box
                 sx={{
                   border: "1px solid #ccc",
@@ -477,6 +477,28 @@ const MessageWithFeedback = ({ message }) => {
               </Box>
             )}
 
+            {!message.isStreaming && message.thinking && (
+              <Accordion
+                type="single"
+                collapsible
+                onValueChange={(val) => setDetailsOpen(val === "thinking")}
+                className="border rounded-md bg-white shadow-sm animate-fadeIn"
+              >
+                <AccordionItem value="thinking">
+                  <AccordionTrigger
+                    className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+                                         border border-gray-300 rounded-md bg-white
+                                         hover:bg-gray-100 flex items-center gap-2 transition"
+                  >
+                    <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600 whitespace-pre-wrap">
+                    {message.thinking}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )}
+
 
             {message.sql && (
               <Box
@@ -490,8 +512,8 @@ const MessageWithFeedback = ({ message }) => {
                 <SQLCodeBlock code={message.sql} />
               </Box>
             )}
-        
-         
+
+
 
             {/* Content */}
             {/* {message.content && (
@@ -533,35 +555,6 @@ const MessageWithFeedback = ({ message }) => {
                 />
               </Box>
             )}
-
-
-            {/* SQL */}
-            {/* {message.sql && (
-              <Box
-                sx={{
-                  border: "1px solid #ccc",
-                  borderRadius: "12px",
-                  padding: "12px",
-                  backgroundColor: "#fff",
-                }}
-              >
-                <SQLCodeBlock code={message.sql} />
-              </Box>
-            )} */}
-
-            {/* Chart */}
-            {/* {message.chart && (
-              <Box
-                sx={{
-                  border: "1px solid #ccc",
-                  borderRadius: "12px",
-                  padding: "12px",
-                  backgroundColor: "#fff",
-                }}
-              >
-                <VegaLite spec={JSON.parse(message.chart)} />
-              </Box>
-            )} */}
 
             {message.chart && (() => {
               const chartSpec = JSON.parse(message.chart);

@@ -33,7 +33,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useSelectedApp } from "../components/SelectedAppContext";
 import ApiService from "../services/index";
 import { CssTextField, Loader } from "./styled.components";
-import loading from "assests/images/loadingBlack.png";
+import loading from "assests/images/loading.png";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 interface MainContentProps {
@@ -688,7 +688,7 @@ const MainContent = ({
                     sx={{
                       display: "flex",
                       // justifyContent: "flex-start", // Align to left
-                      justifyContent: message.fromUser ? "flex-end" : "flex-start",
+                      justifyContent: message.fromUser ? "flex-start" : "flex-end",
                     }}
                   >
                     {message.fromUser ? (
@@ -706,6 +706,7 @@ const MainContent = ({
                     ) : (
                       <MessageWithFeedback
                         message={message}
+
                       // executeSQL={executeSQL}
                       // apiCortex={apiCortex}
                       // handleGraphClick={handleGraphClick}
@@ -714,31 +715,36 @@ const MainContent = ({
                   </Box>
                 </Box>
               ))}
-               {isLoading && (
+              {isLoading && (
                 <Box sx={{ display: "flex", justifyContent: "start", mt: 2 }}>
-                  {/* <HashLoader color="#000000" size={20} /> */}
+
                   <Loader src={loading} alt="Loading..." />
                 </Box>
               )}
-              {/* {isLoading && (
+
+              {!isLoading && messages.length > 0 && !messages[messages.length - 1].fromUser && (
                 <Box
                   sx={{
+                    mt: 3,
+                    mb: 4,
+                    px: 3,
+                    py: 1.5,
+                    backgroundColor: "#e0f2fe",
                     border: "1px solid #ccc",
                     borderRadius: "8px",
-                    padding: "12px",
-                    marginTop: "8px",
-                    backgroundColor: "transparent",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 1,
+                    textAlign: "center",
+                    fontWeight: 600,
+                    color: "#333",
+                    boxShadow: "0px 2px 6px rgba(0,0,0,0.05)",
+                    maxWidth: "400px",
+                    marginX: "auto",
                   }}
                 >
-                  <Loader src={loading} alt="Thinking..." />
-                  <Typography variant="body2" sx={{ color: "#555" }}>
-                    Thinking...
+                  <Typography variant="body1" sx={{ fontWeight: 700 }}>
+                    #END OF THE ABOVE CHAT#
                   </Typography>
                 </Box>
-              )} */}
+              )}
 
               <div id="scroll-anchor" style={{ height: 1 }} />
             </Box>
@@ -998,7 +1004,7 @@ const MainContent = ({
         <Dialog open={chartOpen} onClose={() => setChartOpen(false)} maxWidth="lg" fullWidth>
           <Chart chartData={vegaChartData} onClose={() => setChartOpen(false)} />
         </Dialog>
-        
+
 
 
       </Box>

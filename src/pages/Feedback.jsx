@@ -19,6 +19,20 @@ import { useSelectedApp } from "components/SelectedAppContext";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion"
 import { ChevronDown } from "lucide-react";
 import { VegaLite } from 'react-vega';
+import loading from "assests/images/loading.png";
+import { CssTextField, Loader } from "./styled.components";
+import { Tabs, Tab } from "@mui/material";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper
+} from "@mui/material";
+
 
 const Feedback = ({ message }) => {
   const { selectedAppId } = useSelectedApp();
@@ -80,6 +94,8 @@ const Feedback = ({ message }) => {
     setComment("");
     setShowCommentBox(false);
   };
+
+
 
   return (
     <div className="flex space-x-4 p-2 border-t" style={{ textAlign: "left", marginTop: "10px" }}>
@@ -187,6 +203,7 @@ const Feedback = ({ message }) => {
                     </IconButton>
                 </div>
             )} */}
+
       {showCommentBox && (
         <div className="flex items-center" style={{ marginTop: "20px" }}>
           <TextField
@@ -287,11 +304,31 @@ const Feedback = ({ message }) => {
 // }
 
 const SQLCodeBlock = ({ code }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="border rounded-lg overflow-hidden shadow-sm">
-      <div className="bg-gray-100 px-3 py-2 text-sm font-weight-bold border-b">
-        Generated SQL
+    <div className="border rounded-lg overflow-hidden shadow-sm bg-white relative">
+      {/* Header bar with label on left and icon on far right */}
+      <div className="bg-gray-100 px-3 py-2 text-sm font-weight-bold border-b flex justify-between items-center">
+        <span className="inline-block bg-blue-50 text-blue-700 border border-blue-300 px-3 py-1 rounded-md">
+          Generated SQL
+        </span>
+        <Tooltip title={copied ? "Copied!" : "Copy SQL"} arrow>
+          <ContentCopyIcon
+            onClick={handleCopy}
+            className="cursor-pointer text-blue-600 hover:text-blue-800"
+            fontSize="small"
+          />
+        </Tooltip>
       </div>
+
+      {/* SQL content */}
       <SyntaxHighlighter
         language="sql"
         style={dracula}
@@ -313,190 +350,85 @@ const SQLCodeBlock = ({ code }) => {
 const MessageWithFeedback = ({ message }) => {
   const isUser = message.fromUser;
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("chart");
+  const chartContainerRef = useRef(null);
 
-//without border box - old code
-//   return (
-//     <div
-//       className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"
-//         }`}
-//     >
-//       <div
-//         className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-md ${isUser
-//           ? "bg-blue-500 text-white rounded-br-none"
-//           : "bg-white text-gray-900 border border-gray-200 rounded-bl-none"
-//           }`}
-//       >
-//         {/* USER MESSAGE */}
-//         {/* {isUser && (
-//           <div className="whitespace-pre-wrap text-sm">{message.text}</div>
-//         )} */}
-//         {isUser && (
-//           <div className="flex justify-end w-full my-3">
-//             <div className="bg-gray-100 text-black px-4 py-3 rounded-2xl max-w-[80%] whitespace-pre-wrap text-sm">
-//               {message.text}
-//             </div>
-//           </div>
-//         )}
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
+  const formatRichText = (text) => {
+    if (!text) return "";
 
+    // Convert URLs into clickable hyperlinks
+    text = text.replace(
+      /(https?:\/\/[^\s<]+)/g,
+      (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
+    );
 
-//         {/* ASSISTANT MESSAGE */}
-//         {/* {!isUser && (
-//           <div className="space-y-4 text-sm">
+    // Bolden step headers like "Step 1:"
+    text = text.replace(/(Step \d+:)/g, "<strong>$1</strong>");
 
+    // Bolden phrases before colon inside bullet points
+    text = text.replace(/^- ([^:\n]+):\s*(.*)/gm, (_, label, rest) => `- <strong>${label}:</strong> ${rest}`);
 
-//             {message.thinking && !message.isStreaming && (
+    // Bolden numbered list items like "1.", "2.", "3." at the start of a line
+    text = text.replace(/^(\d+\.)\s+/gm, (_, number) => `<strong>${number}</strong> `);
 
-//               <Accordion
-//                 type="single"
-//                 collapsible
-//                 onValueChange={(val) => setDetailsOpen(val === "thinking")}
-//                 className="border rounded-md bg-white shadow-sm"
-//               >
-//                 <AccordionItem value="thinking">
-//                   <AccordionTrigger
-//                     className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
-//                  border border-gray-300 rounded-md bg-white
-//                  hover:bg-gray-100 flex items-center gap-2 transition"
-//                   >
-//                     <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
-//                   </AccordionTrigger>
+    // Bolden section headers like "Top Project Leaders:"
+    text = text.replace(/^([^\n:]+):\s*$/gm, "<strong>$1</strong>");
 
-//                   <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600">
-//                     {message.thinking}
-//                   </AccordionContent>
-//                 </AccordionItem>
-//               </Accordion>
+    // Convert name-value pairs like "Anil: 14 projects" into bullet-style lines
+    text = text.replace(/^([^\n:]+):\s*(.+)$/gm, (_, label, value) => `• <strong>${label}:</strong> ${value}`);
 
-//             )}
+    // Add line breaks between paragraphs and lines
+    text = text.replace(/\n{2,}/g, "<br/><br/>"); // double line breaks → paragraph breaks
+    text = text.replace(/\n/g, "<br/>"); // single line breaks → line breaks
 
+    return text;
+  };
 
-//             {message.thinking && message.isStreaming && (
-//               <div className="border rounded-lg p-3 bg-gray-50">
-//                 <div className="text-sm font-medium mb-2 flex items-center gap-2">
-//                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-//                   Thinking...
-//                 </div>
-//                 <div className="text-gray-600 whitespace-pre-wrap">
-//                   {message.thinking}
-//                 </div>
-//               </div>
-//             )}
+  const downloadCSV = (data, fields, filename = "chart-data.csv") => {
+    const csvRows = [];
 
+    // Header
+    csvRows.push(fields.join(","));
 
+    // Rows
+    data.forEach(row => {
+      const values = fields.map(field => `"${row[field]}"`);
+      csvRows.push(values.join(","));
+    });
 
+    // Create blob and trigger download
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
-//             {message.sql && <SQLCodeBlock code={message.sql} />}
+  return (
+    <div className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"}`}>
+      <div className="max-w-[80%]">
 
-//             {message.chart && (
-//               <Box sx={{ my: 2 }}>
-//                 <VegaLite spec={JSON.parse(message.chart)} />
-//               </Box>
-//             )}
-
-
-
-//             {message.content && (
-//               <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
-//                 {message.content}
-//                 {message.isStreaming && (
-//                   <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse"></span>
-//                 )}
-//               </div>
-//             )}
-//           </div>
-//         )} */}
-//         {!isUser && (
-//   <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: "80%" }}>
-    
-//     {/* Thinking */}
-//     {message.thinking && (
-//       <Box
-//         sx={{
-//           border: "1px solid #ccc",
-//           borderRadius: "12px",
-//           padding: "12px",
-//           backgroundColor: "#f9f9f9",
-//         }}
-//       >
-//         <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1 }}>
-//           Thinking...
-//         </Typography>
-//         <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#555" }}>
-//           {message.thinking}
-//         </Typography>
-//       </Box>
-//     )}
-
-//     {/* Content */}
-//     {message.content && (
-//       <Box
-//         sx={{
-//           border: "1px solid #ccc",
-//           borderRadius: "12px",
-//           padding: "12px",
-//           backgroundColor: "#fff",
-//         }}
-//       >
-//         <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#333" }}>
-//           {message.content}
-//         </Typography>
-//       </Box>
-//     )}
-
-//     {/* SQL */}
-//     {message.sql && (
-//       <Box
-//         sx={{
-//           border: "1px solid #ccc",
-//           borderRadius: "12px",
-//           padding: "12px",
-//           backgroundColor: "#fff",
-//         }}
-//       >
-//         <SQLCodeBlock code={message.sql} />
-//       </Box>
-//     )}
-
-//     {/* Chart */}
-//     {message.chart && (
-//       <Box
-//         sx={{
-//           border: "1px solid #ccc",
-//           borderRadius: "12px",
-//           padding: "12px",
-//           backgroundColor: "#fff",
-//         }}
-//       >
-//         <VegaLite spec={JSON.parse(message.chart)} />
-//       </Box>
-//     )}
-//   </Box>
-// )}
-
-
-//       </div>
-//     </div>
-//   );
-return (
-  <div className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"}`}>
-    <div className="max-w-[80%]">
-      
-      {/* USER MESSAGE */}
-      {isUser && (
-        <div className="flex justify-end w-full">
-          <div className="bg-gray-100 text-black px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm">
-            {message.text}
+        {/* USER MESSAGE */}
+        {isUser && (
+          <div className="flex justify-end w-full">
+            <div className="bg-gray-100 text-black px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm">
+              {message.text}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ASSISTANT MESSAGE */}
-      {!isUser && (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          
-          {/* Thinking */}
-          {message.thinking && (
+        {/* ASSISTANT MESSAGE */}
+        {!isUser && (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+        {/* Thinking */}
+        {/* {message.thinking && (
             <Box
               sx={{
                 border: "1px solid #ccc",
@@ -512,10 +444,41 @@ return (
                 {message.thinking}
               </Typography>
             </Box>
-          )}
+          )} */}
 
-          {/* Content */}
-          {message.content && (
+        {message.thinking && (
+              <Box
+                sx={{
+                  border: "1px solid #ccc",
+                  borderRadius: "12px",
+                  padding: "12px",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                  <Loader src={loading} alt="Thinking..." />
+                  <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                    Thinking...
+                  </Typography>
+                </Box>
+
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#555",
+                    lineHeight: 1.6,
+                    "& strong": { fontWeight: 600 },
+                    "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
+                    "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
+                    "& li": { marginBottom: "4px" },
+                    "& p": { marginBottom: "8px" },
+                  }}
+                  dangerouslySetInnerHTML={{ __html: formatRichText(message.thinking) }}
+                />
+              </Box>
+            )}
+       
+            {/* Content */}
+            {/* {message.content && (
             <Box
               sx={{
                 border: "1px solid #ccc",
@@ -528,41 +491,225 @@ return (
                 {message.content}
               </Typography>
             </Box>
-          )}
+          )} */}
 
-          {/* SQL */}
-          {message.sql && (
-            <Box
-              sx={{
-                border: "1px solid #ccc",
-                borderRadius: "12px",
-                padding: "12px",
-                backgroundColor: "#fff",
-              }}
-            >
-              <SQLCodeBlock code={message.sql} />
-            </Box>
-          )}
+            {message.content && (
+              <Box
+                sx={{
+                  border: "1px solid #ccc",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#555",
+                    lineHeight: 1.6,
+                    "& strong": { fontWeight: 600 },
+                    "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
+                    "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
+                    "& li": { marginBottom: "4px" },
+                    "& p": { marginBottom: "8px" },
+                  }}
+                  dangerouslySetInnerHTML={{ __html: formatRichText(message.content) }}
+                />
+              </Box>
+            )}
 
-          {/* Chart */}
-          {message.chart && (
-            <Box
-              sx={{
-                border: "1px solid #ccc",
-                borderRadius: "12px",
-                padding: "12px",
-                backgroundColor: "#fff",
-              }}
-            >
-              <VegaLite spec={JSON.parse(message.chart)} />
-            </Box>
-          )}
-        </Box>
-      )}
-    </div>
-  </div>
-);
 
+            {/* SQL */}
+            {message.sql && (
+              <Box
+                sx={{
+                  border: "1px solid #ccc",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <SQLCodeBlock code={message.sql} />
+              </Box>
+            )}
+
+            {/* Chart */}
+            {/* {message.chart && (
+              <Box
+                sx={{
+                  border: "1px solid #ccc",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <VegaLite spec={JSON.parse(message.chart)} />
+              </Box>
+            )} */}
+
+            {message.chart && (() => {
+              const chartSpec = JSON.parse(message.chart);
+              const chartData = chartSpec?.data?.values || [];
+              const chartFields = chartData.length > 0 ? Object.keys(chartData[0]) : [];
+
+              // Force chart to fit container
+              chartSpec.autosize = { type: "fit-y", contains: "padding" };
+              chartSpec.width = 600;
+              return (
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "12px",
+                    padding: "12px",
+                    backgroundColor: "#fff",
+                    maxWidth: "100%",
+                    overflowX: "hidden",
+                    overflowY: "auto",
+                    boxShadow: "0px 2px 6px rgba(0,0,0,0.05)",
+                    marginTop: "12px",
+                  }}
+                >
+                  {/* Tabs + Download Button */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 0,
+                    }}
+                  >
+                    <Tabs
+                      value={activeTab}
+                      onChange={handleTabChange}
+                      textColor="primary"
+                      indicatorColor="primary"
+                      sx={{ minHeight: 0, height: 36 }}
+                      TabIndicatorProps={{ style: { height: 2 } }}
+                    >
+                      <Tab
+                        label="Chart"
+                        value="chart"
+                        sx={{
+                          minHeight: 0,
+                          height: 36,
+                          textTransform: "none",
+                          fontWeight: 600,
+                          border: "1px solid #ccc",
+                          borderRadius: "8px 8px 0 0",
+                          backgroundColor: "#f5f5f5",
+                          boxShadow: activeTab === "chart" ? "0px 2px 4px rgba(0,0,0,0.1)" : "none",
+                          marginRight: 1,
+                        }}
+                      />
+                      <Tab
+                        label="Table"
+                        value="table"
+                        sx={{
+                          minHeight: 0,
+                          height: 36,
+                          textTransform: "none",
+                          fontWeight: 600,
+                          border: "1px solid #ccc",
+                          borderRadius: "8px 8px 0 0",
+                          backgroundColor: "#f5f5f5",
+                          boxShadow: activeTab === "table" ? "0px 2px 4px rgba(0,0,0,0.1)" : "none",
+                        }}
+                      />
+                    </Tabs>
+
+                    {/* Show button only when table tab is active */}
+                    {activeTab === "table" && chartData.length > 0 && (
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => downloadCSV(chartData, chartFields)}
+                        sx={{ height: 30 }}
+                      >
+                        Download CSV
+                      </Button>
+                    )}
+                  </Box>
+
+                  <Box sx={{ borderBottom: "1px solid #ccc", marginBottom: 2 }} />
+
+                  {/* Chart View */}
+                  {activeTab === "chart" && (
+                    <Box sx={{ width: "100%", overflowX: "auto" }}>
+                      <Box
+                        sx={{
+                          minWidth: "600px",
+                          width: chartSpec.width ? `${chartSpec.width}px` : "100%",
+                          paddingBottom: "8px",
+                        }}
+                      >
+                        <VegaLite spec={chartSpec} />
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* Table View */}
+                  {activeTab === "table" && chartData.length > 0 && (
+                    <Box sx={{ minWidth: "600px", width: "100%" }}>
+                      <table
+                        style={{
+                          width: "100%",
+                          borderCollapse: "collapse",
+                          marginTop: "8px",
+                          fontSize: "0.875rem",
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <thead>
+                          <tr>
+                            {chartFields.map((field) => (
+                              <th
+                                key={field}
+                                style={{
+                                  textAlign: "left",
+                                  padding: "6px 8px",
+                                  borderBottom: "1px solid #ddd",
+                                  fontSize: "0.875rem",
+                                  fontWeight: 600,
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {field.replace(/_/g, " ")}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {chartData.map((row, index) => (
+                            <tr key={index}>
+                              {chartFields.map((field) => (
+                                <td
+                                  key={field}
+                                  style={{
+                                    padding: "6px 8px",
+                                    borderBottom: "1px solid #eee",
+                                    fontSize: "0.875rem",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {row[field]}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </Box>
+                  )}
+                </Box>
+              );
+
+            })()}
+
+          </Box>
+        )}
+      </div>
+    </div >
+  );
 };
 
 export default MessageWithFeedback;

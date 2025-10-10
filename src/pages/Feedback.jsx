@@ -461,7 +461,7 @@ const MessageWithFeedback = ({ message }) => {
                   </Typography>
                 </Box>
 
-                <Typography
+                {/* <Typography
                   variant="body2"
                   sx={{
                     color: "#555",
@@ -473,11 +473,31 @@ const MessageWithFeedback = ({ message }) => {
                     "& p": { marginBottom: "8px" },
                   }}
                   dangerouslySetInnerHTML={{ __html: formatRichText(message.thinking) }}
-                />
+                /> */}
+
+                  <Accordion
+                type="single"
+                collapsible
+                onValueChange={(val) => setDetailsOpen(val === "thinking")}
+                className="border rounded-md bg-white shadow-sm animate-fadeIn"
+              >
+                <AccordionItem value="thinking">
+                  <AccordionTrigger
+                    className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+                                         border border-gray-300 rounded-md bg-white
+                                         hover:bg-gray-100 flex items-center gap-2 transition"
+                  >
+                    <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600 whitespace-pre-wrap">
+                    {formatRichText(message.thinking)}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
               </Box>
             )}
 
-            {!message.isStreaming && message.thinking && (
+            {/* {!message.isStreaming && message.thinking && (
               <Accordion
                 type="single"
                 collapsible
@@ -493,11 +513,11 @@ const MessageWithFeedback = ({ message }) => {
                     <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
                   </AccordionTrigger>
                   <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600 whitespace-pre-wrap">
-                    {message.thinking}
+                    {formatRichText(message.thinking)}
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            )}
+            )} */}
 
 
             {message.sql && (

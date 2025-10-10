@@ -446,7 +446,7 @@ const MessageWithFeedback = ({ message }) => {
             </Box>
           )} */}
 
-        {message.thinking && (
+         {message.thinking && (
               <Box
                 sx={{
                   border: "1px solid #ccc",
@@ -476,7 +476,23 @@ const MessageWithFeedback = ({ message }) => {
                 />
               </Box>
             )}
-       
+
+
+            {message.sql && (
+              <Box
+                sx={{
+                  border: "1px solid #ccc",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <SQLCodeBlock code={message.sql} />
+              </Box>
+            )}
+        
+         
+
             {/* Content */}
             {/* {message.content && (
             <Box
@@ -520,7 +536,7 @@ const MessageWithFeedback = ({ message }) => {
 
 
             {/* SQL */}
-            {message.sql && (
+            {/* {message.sql && (
               <Box
                 sx={{
                   border: "1px solid #ccc",
@@ -531,7 +547,7 @@ const MessageWithFeedback = ({ message }) => {
               >
                 <SQLCodeBlock code={message.sql} />
               </Box>
-            )}
+            )} */}
 
             {/* Chart */}
             {/* {message.chart && (

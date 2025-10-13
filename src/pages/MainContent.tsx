@@ -688,7 +688,7 @@ const MainContent = ({
                     sx={{
                       display: "flex",
                       // justifyContent: "flex-start", // Align to left
-                      justifyContent: message.fromUser ? "flex-end" : "flex-start",
+                      justifyContent: message.fromUser ? "flex-start" : "flex-end",
                     }}
                   >
                     {message.fromUser ? (

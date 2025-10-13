@@ -506,15 +506,18 @@ const MessageWithFeedback = ({ message }) => {
       transition: "all 0.3s ease",
     }}
   >
+{message.isStreaming && message.thinking && (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
       <Loader src={loading} alt="Thinking..." />
       <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
         Thinking...
       </Typography>
     </Box>
+)}
 
     {/* Expand/Collapse control */}
     {!message.isStreaming && message.thinking && (
+
       <Box>
         <Button
           size="small"

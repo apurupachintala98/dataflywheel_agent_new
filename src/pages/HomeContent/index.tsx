@@ -213,7 +213,6 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             ...msg,
                             content: "Error occurred while processing your request.",
                             isStreaming: false,
-                            fromUser: false,
                         }
                         : msg
                 )
@@ -391,7 +390,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                                             thinking: thinkingContent?.thinking?.text || finalThinking,
                                             content: finalText,
                                             sql: sqlContent,
-                                            chart: chartSpec, // ✅ Add chart here
+                                            chart: chartSpec,
                                             isStreaming: false,
                                             showDetails: false,
                                         }

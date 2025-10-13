@@ -678,26 +678,29 @@ const MessageWithFeedback = ({ message }) => {
   // );
 
 
-return (
-  <div className="w-full my-3">
-    {/* Each message row is full width */}
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      {isUser ? (
-        // USER MESSAGE (Right-aligned)
-        <div className="bg-blue-500 text-white px-4 py-3 rounded-2xl shadow-md rounded-br-none text-sm max-w-[80%] whitespace-pre-wrap">
-          {message.text}
-        </div>
-      ) : (
-        // ASSISTANT MESSAGE (Left-aligned)
-        <div className="max-w-[80%] bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-md text-gray-900 text-sm">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            {/* Thinking */}
+  return (
+    <div className="w-full my-3">
+      {/* Each message row is full width */}
+      <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+        {isUser ? (
+          // USER MESSAGE (Right-aligned)
+          <div className="bg-blue-500 text-white px-4 py-3 rounded-2xl shadow-md rounded-br-none text-sm max-w-[80%] whitespace-pre-wrap">
+            {message.text}
+          </div>
+        ) : (
+          // ASSISTANT MESSAGE (Left-aligned)
+          <div className="max-w-[80%] bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-md text-gray-900 text-sm">
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                border: "1px solid #ccc",
+                borderRadius: "12px",
+                padding: "12px",
+              }}
+            >
+              {/* Thinking */}
               {message.thinking && (
                 <Box
                   sx={{
@@ -930,12 +933,12 @@ return (
                   </Box>
                 );
               })()}
-          </Box>
-        </div>
-      )}
+            </Box>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 
 
 };

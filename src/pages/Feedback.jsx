@@ -695,9 +695,9 @@ const MessageWithFeedback = ({ message }) => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                border: "1px solid #ccc",
-                borderRadius: "12px",
-                padding: "12px",
+                // border: "1px solid #ccc",
+                // borderRadius: "12px",
+                // padding: "12px",
               }}
             >
               {/* Thinking */}

@@ -181,7 +181,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         if (!inputValue.trim() || isLoading) return;
 
         const userMessage = {
-            id: Date.now().toString(),
+            id: `user-${Date.now()}`,
             type: "user" as const,
             content: inputValue.trim(),
             thinking: "",
@@ -191,7 +191,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         setMessages((prev) => [...prev, userMessage]);
 
         const assistantMessage = {
-            id: (Date.now() + 1).toString(),
+            id: `assistant-${Date.now()}`,
             type: "assistant" as const,
             content: "",
             thinking: "",
@@ -341,7 +341,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             streamingText += data.text;
                             setMessages((prev) =>
                                 prev.map((msg) =>
-                                    msg.id === messageId
+                                    msg.id === messageId && msg.type === "assistant"
                                         ? { ...msg, content: streamingText, sql: sqlContent }
                                         : msg
                                 )

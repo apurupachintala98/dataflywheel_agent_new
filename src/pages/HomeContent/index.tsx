@@ -187,6 +187,9 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             thinking: "",
             isStreaming: false,
         };
+
+        setMessages((prev) => [...prev, userMessage]);
+
         const assistantMessage = {
             id: (Date.now() + 1).toString(),
             type: "assistant" as const,
@@ -195,7 +198,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             isStreaming: true,
         };
 
-        setMessages((prev) => [...prev, userMessage, assistantMessage]);
+        setMessages((prev) => [...prev, assistantMessage]);
 
         console.log("home content", messages);
         setInputValue("");

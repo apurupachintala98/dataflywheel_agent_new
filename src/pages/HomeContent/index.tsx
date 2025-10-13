@@ -1060,7 +1060,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                         break;
 
                     case "response.text":
-                        finalText = data.text;
+                        finalText += data.text;
                         break;
 
                     case "response":

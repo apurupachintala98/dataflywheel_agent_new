@@ -348,7 +348,7 @@ const SQLCodeBlock = ({ code }) => {
 
 // ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
-  console.log(message, "message info");
+  console.log(message, "message");
   const isUser = message.fromUser;
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");
@@ -413,10 +413,11 @@ const MessageWithFeedback = ({ message }) => {
 
   return (
     <div className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`w-auto max-w-[80%] flex flex-col`}>
+      <div className="max-w-[80%]">
+
         {/* USER MESSAGE */}
         {isUser && (
-          <div className="self-end w-full">
+          <div className="flex justify-end w-full">
             <div className="bg-gray-100 text-black px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm">
               {message.text}
             </div>
@@ -425,7 +426,7 @@ const MessageWithFeedback = ({ message }) => {
 
         {/* ASSISTANT MESSAGE */}
         {!isUser && (
-          <Box sx={{ alignSelf: "flex-start", display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {message.thinking && (
               <Box
                 sx={{
@@ -453,6 +454,7 @@ const MessageWithFeedback = ({ message }) => {
                         textTransform: "none",
                         fontSize: "0.9rem",
                         color: "#1976d2",
+                        mb: 1,
                       }}
                       onClick={() => setDetailsOpen((prev) => !prev)}
                     >

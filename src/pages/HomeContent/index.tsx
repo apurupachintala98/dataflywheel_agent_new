@@ -900,7 +900,8 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             type: "user",
             fromUser: true, 
             content: inputValue.trim(),
-           
+           thinking: "",
+        isStreaming: false,
         };
 
         setMessages((prev) => [...prev, userMessage]);
@@ -928,6 +929,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                     msg.id === assistantMessage.id
                         ? {
                             ...msg,
+                            fromUser: false,
                             content: "Error occurred while processing your request.",
                             isStreaming: false
                         }
@@ -1017,7 +1019,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             setMessages((prev) =>
                                 prev.map((msg) =>
                                     msg.id === messageId
-                                        ? { ...msg, thinking: streamingThinking }
+                                        ? { ...msg, fromUser: false, thinking: streamingThinking }
                                         : msg
                                 )
                             );
@@ -1042,7 +1044,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             setMessages((prev) =>
                                 prev.map((msg) =>
                                     msg.id === messageId
-                                        ? { ...msg, chart: chartSpec, sql: sqlContent }
+                                        ? { ...msg, fromUser: false, chart: chartSpec, sql: sqlContent }
                                         : msg
                                 )
                             );
@@ -1056,7 +1058,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             setMessages((prev) =>
                                 prev.map((msg) =>
                                     msg.id === messageId
-                                        ? { ...msg, content: streamingText, sql: sqlContent }
+                                        ? { ...msg, fromUser: false, content: streamingText, sql: sqlContent }
                                         : msg
                                 )
                             );
@@ -1110,6 +1112,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                                             chart: chartSpec, // ✅ Add chart here
                                             isStreaming: false,
                                             showDetails: false,
+                                            fromUser: false,
                                         }
                                         : msg
                                 )
@@ -1185,8 +1188,6 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             );
         }
     };
-
-
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

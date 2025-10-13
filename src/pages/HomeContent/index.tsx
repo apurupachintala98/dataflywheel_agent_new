@@ -198,6 +198,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         };
 
         setMessages((prev) => [...prev, userMessage, assistantMessage]);
+        console.log("home content",messages);
         setInputValue("");
         setIsLoading(true);
         setSubmitted(true);

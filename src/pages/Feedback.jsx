@@ -348,7 +348,6 @@ const SQLCodeBlock = ({ code }) => {
 
 // ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
-  console.log(message, "message");
   const isUser = message.fromUser;
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");
@@ -427,6 +426,77 @@ const MessageWithFeedback = ({ message }) => {
         {/* ASSISTANT MESSAGE */}
         {!isUser && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+            {/* Thinking */}
+            {/* {message.thinking && (
+            <Box
+              sx={{
+                border: "1px solid #ccc",
+                borderRadius: "12px",
+                padding: "12px",
+                backgroundColor: "#f9f9f9",
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1 }}>
+                Thinking...
+              </Typography>
+              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#555" }}>
+                {message.thinking}
+              </Typography>
+            </Box>
+          )} */}
+
+            {/* {message.thinking && (
+              <Box
+                sx={{
+                  border: "1px solid #ccc",
+                  borderRadius: "12px",
+                  padding: "12px",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                  <Loader src={loading} alt="Thinking..." />
+                  <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                    Thinking...
+                  </Typography>
+                </Box>
+
+                 <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#555",
+                    lineHeight: 1.6,
+                    "& strong": { fontWeight: 600 },
+                    "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
+                    "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
+                    "& li": { marginBottom: "4px" },
+                    "& p": { marginBottom: "8px" },
+                  }}
+                  dangerouslySetInnerHTML={{ __html: formatRichText(message.thinking) }}
+                /> 
+
+                  <Accordion
+                type="single"
+                collapsible
+                onValueChange={(val) => setDetailsOpen(val === "thinking")}
+                className="border rounded-md bg-white shadow-sm animate-fadeIn"
+              >
+                <AccordionItem value="thinking">
+                  <AccordionTrigger
+                    className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+                                         border border-gray-300 rounded-md bg-white
+                                         hover:bg-gray-100 flex items-center gap-2 transition"
+                  >
+                    <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600 whitespace-pre-wrap">
+                    {formatRichText(message.thinking)}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+              </Box>
+            )} */}
+
             {message.thinking && (
               <Box
                 sx={{
@@ -445,6 +515,7 @@ const MessageWithFeedback = ({ message }) => {
                   </Box>
                 )}
 
+                {/* Expand/Collapse control */}
                 {!message.isStreaming && message.thinking && (
                   <Box>
                     <Button
@@ -482,6 +553,29 @@ const MessageWithFeedback = ({ message }) => {
                 )}
               </Box>
             )}
+
+
+            {/* {!message.isStreaming && message.thinking && (
+              <Accordion
+                type="single"
+                collapsible
+                onValueChange={(val) => setDetailsOpen(val === "thinking")}
+                className="border rounded-md bg-white shadow-sm animate-fadeIn"
+              >
+                <AccordionItem value="thinking">
+                  <AccordionTrigger
+                    className="w-fit px-3 py-1.5 text-sm font-medium text-gray-700
+                                         border border-gray-300 rounded-md bg-white
+                                         hover:bg-gray-100 flex items-center gap-2 transition"
+                  >
+                    <span>{detailsOpen ? "Hide Details" : "Show Details"}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="mt-2 px-3 py-2 bg-gray-50 rounded-md text-sm text-gray-600 whitespace-pre-wrap">
+                    {formatRichText(message.thinking)}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )} */}
 
             {message.sql && (
               <Box

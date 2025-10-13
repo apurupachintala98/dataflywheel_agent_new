@@ -349,8 +349,6 @@ const SQLCodeBlock = ({ code }) => {
 // ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
   // console.log(message, "message info");
-  const isUser = message.fromUser;
-  console.log(isUser);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");
   const chartContainerRef = useRef(null);
@@ -677,8 +675,8 @@ const MessageWithFeedback = ({ message }) => {
   return (
   <div className="w-full my-3">
     {/* Each message row is full width */}
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      {isUser ? (
+    <div className={`flex w-full ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+      {message.type === "user" ? (
         // USER MESSAGE (Right-aligned)
         <div className="bg-blue-500 text-white px-4 py-3 rounded-2xl shadow-md rounded-br-none text-sm max-w-[80%] whitespace-pre-wrap">
           {message.text}

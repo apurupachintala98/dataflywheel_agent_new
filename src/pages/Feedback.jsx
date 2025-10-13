@@ -413,12 +413,10 @@ const MessageWithFeedback = ({ message }) => {
 
   return (
     <div className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`max-w-[80%] ${
-          isUser ? "text-right" : "text-left"
-        } flex flex-col ${isUser ? "items-end" : "items-start"}`}>
+      <div className={`w-auto max-w-[80%] flex flex-col`}>
         {/* USER MESSAGE */}
         {isUser && (
-          <div className="flex justify-end w-full">
+          <div className="self-end w-full">
             <div className="bg-gray-100 text-black px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm">
               {message.text}
             </div>
@@ -427,7 +425,7 @@ const MessageWithFeedback = ({ message }) => {
 
         {/* ASSISTANT MESSAGE */}
         {!isUser && (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ alignSelf: "flex-start", display: "flex", flexDirection: "column", gap: 2 }}>
             {message.thinking && (
               <Box
                 sx={{
@@ -435,10 +433,6 @@ const MessageWithFeedback = ({ message }) => {
                   borderRadius: "12px",
                   padding: "12px",
                   transition: "all 0.3s ease",
-                  display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: 2,
                 }}
               >
                 {message.isStreaming && message.thinking && (

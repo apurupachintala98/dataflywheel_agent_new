@@ -183,7 +183,6 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         const userMessage = {
             id: Date.now().toString(),
             type: "user" as const,
-            fromUser: true,
             content: inputValue.trim(),
             thinking: "",
             isStreaming: false,
@@ -191,7 +190,6 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         const assistantMessage = {
             id: (Date.now() + 1).toString(),
             type: "assistant" as const,
-            fromUser: false,
             content: "",
             thinking: "",
             isStreaming: true,

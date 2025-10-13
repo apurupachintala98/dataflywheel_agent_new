@@ -771,7 +771,7 @@ interface Message {
     sql?: string
     isStreaming?: boolean
     showDetails?: boolean
-    chart?: any; 
+    chart?: any;
     fromUser: boolean;
 }
 
@@ -898,16 +898,11 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         const userMessage: Message = {
             id: Date.now().toString(),
             type: "user",
-            fromUser: true, 
+            fromUser: true,
             content: inputValue.trim(),
-           thinking: "",
+            thinking: "",
             isStreaming: false,
         };
-
-        setMessages((prev) => [...prev, userMessage]);
-        setInputValue("");
-        setIsLoading(true);
-        setSubmitted(true);
 
         const assistantMessage: Message = {
             id: (Date.now() + 1).toString(),
@@ -918,7 +913,10 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             isStreaming: true,
         };
 
-        setMessages((prev) => [...prev, assistantMessage]);
+        setMessages((prev) => [...prev, userMessage, assistantMessage]);
+        setInputValue("");
+        setIsLoading(true);
+        setSubmitted(true);
 
         try {
             await simulateStreamingResponse(assistantMessage.id, userMessage.content);
@@ -929,9 +927,9 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                     msg.id === assistantMessage.id
                         ? {
                             ...msg,
-                            fromUser: false,
                             content: "Error occurred while processing your request.",
-                            isStreaming: false
+                            fromUser: false,
+                            isStreaming: false,
                         }
                         : msg
                 )

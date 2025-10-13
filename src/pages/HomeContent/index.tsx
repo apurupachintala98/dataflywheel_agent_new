@@ -1093,7 +1093,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                                         ? {
                                             ...msg,
                                             thinking: thinkingContent?.thinking?.text || finalThinking,
-                                            content: textContent?.text || finalText,
+                                            content: finalText,
                                             sql: sqlContent,
                                             chart: chartSpec, // ✅ Add chart here
                                             isStreaming: false,

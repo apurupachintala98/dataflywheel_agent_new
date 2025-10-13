@@ -348,7 +348,6 @@ const SQLCodeBlock = ({ code }) => {
 
 // ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
-  console.log("messageinfo", message);
   const isUser = message.type === "user";
   console.log(isUser);
   const [detailsOpen, setDetailsOpen] = useState(false);

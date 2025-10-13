@@ -904,7 +904,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             isStreaming: false,
         };
 
-        // setMessages((prev) => [...prev, userMessage]);
+        setMessages((prev) => [...prev, userMessage]);
         setInputValue("");
         setIsLoading(true);
         setSubmitted(true);
@@ -918,7 +918,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             isStreaming: true,
         };
 
-        setMessages((prev) => [...prev, userMessage, assistantMessage]);
+        setMessages((prev) => [...prev, assistantMessage]);
 
         try {
             await simulateStreamingResponse(assistantMessage.id, userMessage.content);

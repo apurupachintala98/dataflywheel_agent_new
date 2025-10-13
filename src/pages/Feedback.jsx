@@ -413,8 +413,9 @@ const MessageWithFeedback = ({ message }) => {
 
   return (
     <div className={`flex w-full my-3 ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className="max-w-[80%]">
-
+      <div className={`max-w-[80%] ${
+          isUser ? "text-right" : "text-left"
+        } flex flex-col ${isUser ? "items-end" : "items-start"}`}>
         {/* USER MESSAGE */}
         {isUser && (
           <div className="flex justify-end w-full">
@@ -434,6 +435,10 @@ const MessageWithFeedback = ({ message }) => {
                   borderRadius: "12px",
                   padding: "12px",
                   transition: "all 0.3s ease",
+                  display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: 2,
                 }}
               >
                 {message.isStreaming && message.thinking && (
@@ -454,7 +459,6 @@ const MessageWithFeedback = ({ message }) => {
                         textTransform: "none",
                         fontSize: "0.9rem",
                         color: "#1976d2",
-                        mb: 1,
                       }}
                       onClick={() => setDetailsOpen((prev) => !prev)}
                     >

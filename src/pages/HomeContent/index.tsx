@@ -1019,7 +1019,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             setMessages((prev) =>
                                 prev.map((msg) =>
                                     msg.id === messageId
-                                        ? { ...msg, fromUser: false, thinking: streamingThinking }
+                                        ? { ...msg, thinking: streamingThinking }
                                         : msg
                                 )
                             );
@@ -1044,7 +1044,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             setMessages((prev) =>
                                 prev.map((msg) =>
                                     msg.id === messageId
-                                        ? { ...msg, fromUser: false, chart: chartSpec, sql: sqlContent }
+                                        ? { ...msg, chart: chartSpec, sql: sqlContent }
                                         : msg
                                 )
                             );
@@ -1112,7 +1112,6 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                                             chart: chartSpec, // ✅ Add chart here
                                             isStreaming: false,
                                             showDetails: false,
-                                            fromUser: false,
                                         }
                                         : msg
                                 )

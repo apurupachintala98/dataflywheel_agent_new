@@ -67,6 +67,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
     const [submitted, setSubmitted] = useState(false);
     const { sendRequest } = useApiRequest();
     const [messages, setMessages] = useState<MessageType[]>([]);
+
     const { handleStream } = useStreamHandler(setMessages);
     const [data, setData] = useState<any>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -179,18 +180,17 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
 
         if (!inputValue.trim() || isLoading) return;
 
-        const userMessage: Message = {
+        const userMessage = {
             id: Date.now().toString(),
-            type: "user",
+            type: "user" as const,
             fromUser: true,
             content: inputValue.trim(),
             thinking: "",
             isStreaming: false,
         };
-
-        const assistantMessage: Message = {
+        const assistantMessage = {
             id: (Date.now() + 1).toString(),
-            type: "assistant",
+            type: "assistant" as const,
             fromUser: false,
             content: "",
             thinking: "",
@@ -198,7 +198,8 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         };
 
         setMessages((prev) => [...prev, userMessage, assistantMessage]);
-        console.log("home content",messages);
+
+        console.log("home content", messages);
         setInputValue("");
         setIsLoading(true);
         setSubmitted(true);

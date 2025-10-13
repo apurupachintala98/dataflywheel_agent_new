@@ -771,7 +771,8 @@ interface Message {
     sql?: string
     isStreaming?: boolean
     showDetails?: boolean
-    chart?: any; // ✅ Add this line
+    chart?: any; 
+    fromUser: boolean;
 }
 
 
@@ -897,7 +898,9 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         const userMessage: Message = {
             id: Date.now().toString(),
             type: "user",
+            fromUser: true, 
             content: inputValue.trim(),
+           
         };
 
         setMessages((prev) => [...prev, userMessage]);
@@ -908,6 +911,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         const assistantMessage: Message = {
             id: (Date.now() + 1).toString(),
             type: "assistant",
+            fromUser: false,
             content: "",
             thinking: "",
             isStreaming: true,

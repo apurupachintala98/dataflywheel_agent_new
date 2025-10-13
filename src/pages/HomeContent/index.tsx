@@ -210,7 +210,7 @@
 //       setIsLoading(false)
 //     }
 //   }
- 
+
 //   const handleSubmitWrapper = () => { handleSubmit(new Event("submit") as any); };
 
 //   const simulateStreamingResponse = async (messageId: string, userInput: string) => {
@@ -1059,9 +1059,17 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                         }
                         break;
 
+
+
                     case "response.text":
-                        finalText += data.text;
+                        if (data.text) {
+                            if (finalText.length > 0) {
+                                finalText += "\n";
+                            }
+                            finalText += data.text;
+                        }
                         break;
+
 
                     case "response":
                         if (data.content) {

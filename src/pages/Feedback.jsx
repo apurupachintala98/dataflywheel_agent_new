@@ -686,11 +686,9 @@ const MessageWithFeedback = ({ message }) => {
       <div className="w-full flex">
         {isUser ? (
           /* USER: push to the right with ml-auto */
-          <div className="ml-auto w-auto max-w-[80%]">
-            <div className="inline-block bg-blue-500 text-white px-4 py-3 rounded-2xl text-sm shadow-md rounded-br-none whitespace-pre-wrap">
+            <div className="ml-auto w-auto max-w-[80%] inline-block bg-blue-500 text-white px-4 py-3 rounded-2xl text-sm shadow-md rounded-br-none whitespace-pre-wrap">
               {message.text}
             </div>
-          </div>
         ) : (
           /* ASSISTANT: push to the left with mr-auto */
           <div className="mr-auto w-auto max-w-[80%]">

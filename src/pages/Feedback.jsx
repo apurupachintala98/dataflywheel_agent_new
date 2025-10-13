@@ -498,61 +498,61 @@ const MessageWithFeedback = ({ message }) => {
             )} */}
 
             {message.thinking && (
-              <Box
-                sx={{
-                  border: "1px solid #ccc",
-                  borderRadius: "12px",
-                  padding: "12px",
-                  transition: "all 0.3s ease",
-                }}
-              >
-                {message.isStreaming && message.thinking && (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                    <Loader src={loading} alt="Thinking..." />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                      Thinking...
-                    </Typography>
-                  </Box>
-                )}
+  <Box
+    sx={{
+      border: "1px solid #ccc",
+      borderRadius: "12px",
+      padding: "12px",
+      transition: "all 0.3s ease",
+    }}
+  >
 
-                {/* Expand/Collapse control */}
-                {!message.isStreaming && message.thinking && (
-                  <Box>
-                    <Button
-                      size="small"
-                      variant="text"
-                      sx={{
-                        textTransform: "none",
-                        fontSize: "0.9rem",
-                        color: "#1976d2",
-                        mb: 1,
-                      }}
-                      onClick={() => setDetailsOpen((prev) => !prev)}
-                    >
-                      {detailsOpen ? "Hide Details" : "Show Details"}
-                    </Button>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+      <Loader src={loading} alt="Thinking..." />
+      <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+        Thinking...
+      </Typography>
+    </Box>
 
-                    {detailsOpen && (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#555",
-                          lineHeight: 1.6,
-                          "& strong": { fontWeight: 600 },
-                          "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
-                          "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
-                          "& li": { marginBottom: "4px" },
-                          "& p": { marginBottom: "8px" },
-                        }}
-                        dangerouslySetInnerHTML={{
-                          __html: formatRichText(message.thinking),
-                        }}
-                      />
-                    )}
-                  </Box>
-                )}
-              </Box>
-            )}
+    {/* Expand/Collapse control */}
+    {!message.isStreaming && message.thinking && (
+
+      <Box>
+        <Button
+          size="small"
+          variant="text"
+          sx={{
+            textTransform: "none",
+            fontSize: "0.9rem",
+            color: "#1976d2",
+            mb: 1,
+          }}
+          onClick={() => setDetailsOpen((prev) => !prev)}
+        >
+          {detailsOpen ? "Hide Details" : "Show Details"}
+        </Button>
+
+        {detailsOpen && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#555",
+              lineHeight: 1.6,
+              "& strong": { fontWeight: 600 },
+              "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
+              "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
+              "& li": { marginBottom: "4px" },
+              "& p": { marginBottom: "8px" },
+            }}
+            dangerouslySetInnerHTML={{
+              __html: formatRichText(message.thinking),
+            }}
+          />
+        )}
+      </Box>
+    )}
+  </Box>
+)}
 
 
             {/* {!message.isStreaming && message.thinking && (
@@ -577,6 +577,7 @@ const MessageWithFeedback = ({ message }) => {
               </Accordion>
             )} */}
 
+
             {message.sql && (
               <Box
                 sx={{
@@ -589,6 +590,24 @@ const MessageWithFeedback = ({ message }) => {
                 <SQLCodeBlock code={message.sql} />
               </Box>
             )}
+
+
+
+            {/* Content */}
+            {/* {message.content && (
+            <Box
+              sx={{
+                border: "1px solid #ccc",
+                borderRadius: "12px",
+                padding: "12px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#333" }}>
+                {message.content}
+              </Typography>
+            </Box>
+          )} */}
 
             {message.content && (
               <Box

@@ -349,7 +349,10 @@ const SQLCodeBlock = ({ code }) => {
 // ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
   console.log("msg", message);
-  const isUser = message.type === "user";
+  const isUser =
+    message.type === "user" ||
+    message.isStreaming === false ||
+    (!!message.text && !message.chart);
   console.log(isUser);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");

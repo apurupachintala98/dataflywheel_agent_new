@@ -446,7 +446,7 @@ const MessageWithFeedback = ({ message }) => {
             </Box>
           )} */}
 
-            {message.thinking && (
+            {/* {message.thinking && (
               <Box
                 sx={{
                   border: "1px solid #ccc",
@@ -461,7 +461,7 @@ const MessageWithFeedback = ({ message }) => {
                   </Typography>
                 </Box>
 
-                {/* <Typography
+                 <Typography
                   variant="body2"
                   sx={{
                     color: "#555",
@@ -473,7 +473,7 @@ const MessageWithFeedback = ({ message }) => {
                     "& p": { marginBottom: "8px" },
                   }}
                   dangerouslySetInnerHTML={{ __html: formatRichText(message.thinking) }}
-                /> */}
+                /> 
 
                   <Accordion
                 type="single"
@@ -495,7 +495,63 @@ const MessageWithFeedback = ({ message }) => {
                 </AccordionItem>
               </Accordion>
               </Box>
-            )}
+            )} */}
+
+            {message.thinking && (
+  <Box
+    sx={{
+      border: "1px solid #ccc",
+      borderRadius: "12px",
+      padding: "12px",
+      transition: "all 0.3s ease",
+    }}
+  >
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+      <Loader src={loading} alt="Thinking..." />
+      <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+        Thinking...
+      </Typography>
+    </Box>
+
+    {/* Expand/Collapse control */}
+    {!message.isStreaming && message.thinking && (
+      <Box>
+        <Button
+          size="small"
+          variant="text"
+          sx={{
+            textTransform: "none",
+            fontSize: "0.9rem",
+            color: "#1976d2",
+            mb: 1,
+          }}
+          onClick={() => setDetailsOpen((prev) => !prev)}
+        >
+          {detailsOpen ? "Hide Details" : "Show Details"}
+        </Button>
+
+        {detailsOpen && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#555",
+              lineHeight: 1.6,
+              "& strong": { fontWeight: 600 },
+              "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
+              "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
+              "& li": { marginBottom: "4px" },
+              "& p": { marginBottom: "8px" },
+            }}
+            dangerouslySetInnerHTML={{
+              __html: formatRichText(message.thinking),
+            }}
+          />
+        )}
+      </Box>
+    )}
+  </Box>
+)}
+
 
             {/* {!message.isStreaming && message.thinking && (
               <Accordion

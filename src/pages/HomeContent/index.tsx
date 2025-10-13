@@ -215,6 +215,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             ...msg,
                             content: "Error occurred while processing your request.",
                             isStreaming: false,
+                            fromUser: false
                         }
                         : msg
                 )

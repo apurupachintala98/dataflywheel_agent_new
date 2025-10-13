@@ -901,7 +901,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             fromUser: true, 
             content: inputValue.trim(),
            thinking: "",
-        isStreaming: false,
+            isStreaming: false,
         };
 
         setMessages((prev) => [...prev, userMessage]);
@@ -1058,7 +1058,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             setMessages((prev) =>
                                 prev.map((msg) =>
                                     msg.id === messageId
-                                        ? { ...msg, fromUser: false, content: streamingText, sql: sqlContent }
+                                        ? { ...msg, content: streamingText, sql: sqlContent }
                                         : msg
                                 )
                             );

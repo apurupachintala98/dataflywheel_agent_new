@@ -348,8 +348,7 @@ const SQLCodeBlock = ({ code }) => {
 
 // ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
-  console.log(message, "message info");
-  const isUser = message.fromUser;
+  const isUser = message.type === "user";
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");
   const chartContainerRef = useRef(null);

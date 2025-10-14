@@ -146,6 +146,8 @@ const MainContent = ({
   setVegaChartData,
   agentPresent,
   setAgentPresent,
+  selectedAgent,
+  setSelectedAgent,
 }: MainContentProps) => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const [error, setError] = useState("");
@@ -166,7 +168,6 @@ const MainContent = ({
   const [selectedSchema, setSelectedSchema] = useState<string>("");
 
   const [agentList, setAgentList] = useState<string[]>([])
-  const [selectedAgent, setSelectedAgent] = useState<string>("")
   const [agentAnchorEl, setAgentAnchorEl] = useState<HTMLElement | null>(null)
   const [agentListAnchorEl, setAgentListAnchorEl] = useState<HTMLElement | null>(null)
    const [showPromptNotification, setShowPromptNotification] = useState(false)

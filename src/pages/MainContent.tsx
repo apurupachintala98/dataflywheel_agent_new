@@ -855,7 +855,7 @@ const MainContent = ({
                           maxWidth: "75%",
                         }}
                       >
-                        <Typography variant="body1">{message.text}</Typography>
+                        <Typography variant="body1">{message.content}</Typography>
                       </Box>
                     ) : (
                       <MessageWithFeedback

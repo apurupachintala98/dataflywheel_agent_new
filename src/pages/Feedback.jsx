@@ -297,7 +297,7 @@ const isUser = useMemo(() => {
   }, [message.type, message.fromUser])
 
   console.log(isUser);
-  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("chart");
   const chartContainerRef = useRef(null);
 

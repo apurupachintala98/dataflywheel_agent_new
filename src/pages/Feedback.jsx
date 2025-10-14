@@ -640,7 +640,6 @@ const isUser = useMemo(() => {
             }}
           >
             {/* Thinking */}
-            {message.thinking && (
               <Box
                 sx={{
                   border: "1px solid #ccc",
@@ -649,14 +648,16 @@ const isUser = useMemo(() => {
                   transition: "all 0.3s ease",
                 }}
               >
-                {message.isStreaming ? (
+                {message.isStreaming && !message.thinking (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Loader src={loading} alt="Thinking..." />
                     <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                       Thinking...
                     </Typography>
                   </Box>
-                ) : (
+               )}
+
+                {message.isStreaming && message.thinking (
                   <Box>
                     <Button
                       size="small"
@@ -688,7 +689,6 @@ const isUser = useMemo(() => {
                   </Box>
                 )}
               </Box>
-            )}
 
             {/* SQL */}
             {message.sql && (

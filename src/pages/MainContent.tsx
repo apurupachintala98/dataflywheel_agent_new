@@ -319,10 +319,10 @@ const MainContent = ({
           "Content-Type": "application/json",
         },
       })
-
+      console.log(response);
       if (response.status === 200 && response.data) {
         // Assuming the response contains an array of agent names
-        const agents = response.data.agents || response.data || []
+        const agents = response.data.agent_names || []
         setAgentList(agents)
       }
     } catch (error: any) {

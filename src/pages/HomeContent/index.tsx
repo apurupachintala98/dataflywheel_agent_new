@@ -234,6 +234,10 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
     const handleSubmitWrapper = () => { handleSubmit(new Event("submit") as any); };
 
     const simulateStreamingResponse = async (messageId: string, userInput: string) => {
+
+         console.log("[v0] Agent Present:", agentPresent)
+    console.log("[v0] Selected Agent:", selectedAgent)
+    console.log("[v0] Condition check:", agentPresent?.trim().toLowerCase() === "yes", "&&", !!selectedAgent)
         // Build the payload using your existing buildPayload utility
         // const payload = buildPayload({
         //     prompt: userInput,
@@ -256,7 +260,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         let payload: any
     let endpoint: string
 
-    if (agentPresent === "Yes" && selectedAgent) {
+ if (agentPresent?.trim().toLowerCase() === "yes" && selectedAgent?.trim()) {    
       payload = {
         query: {
           aplctn_cd: aplctnCdValue,

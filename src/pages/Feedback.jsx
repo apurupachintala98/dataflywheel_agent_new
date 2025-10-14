@@ -649,7 +649,7 @@ const isUser = useMemo(() => {
                   transition: "all 0.3s ease",
                 }}
               >
-                {message.isStreaming && !message.thinking (
+                {message.isStreaming && (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Loader src={loading} alt="Thinking..." />
                     <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>

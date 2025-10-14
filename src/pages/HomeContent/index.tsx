@@ -106,9 +106,9 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         selectedAppId === "POCGENAI"
             ? "edagnai"
             : selectedAppId.toLowerCase();
-    
-              const [agentPresent, setAgentPresent] = useState<string>("")
-  const [selectedAgent, setSelectedAgent] = useState<string>("")
+
+    const [agentPresent, setAgentPresent] = useState<string>("")
+    const [selectedAgent, setSelectedAgent] = useState<string>("")
 
     useEffect(() => {
         setDbDetails((prev) => ({
@@ -118,11 +118,11 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         setSelectedModels({ yaml: [], search: [] });
     }, [environment, appLvlPrefix]);
 
-      useEffect(() => {
-  }, [agentPresent])
+    useEffect(() => {
+    }, [agentPresent])
 
-  useEffect(() => {
-  }, [selectedAgent])
+    useEffect(() => {
+    }, [selectedAgent])
 
     const handleMenuClick = (e: React.MouseEvent<HTMLElement>, type: keyof AnchorElState) => {
         const target = e.currentTarget as HTMLElement;
@@ -239,68 +239,48 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
     const handleSubmitWrapper = () => { handleSubmit(new Event("submit") as any); };
 
     const simulateStreamingResponse = async (messageId: string, userInput: string) => {
-
-        // Build the payload using your existing buildPayload utility
-        // const payload = buildPayload({
-        //     prompt: userInput,
-        //     semanticModel: selectedModels.yaml,
-        //     searchModel: selectedModels.search,
-        //     model: DEFAULT_MODEL,
-        //     sessionId,
-        //     selectedAppId,
-        //     database_nm: dbDetails.database_nm,
-        //     schema_nm: dbDetails.schema_nm,
-        //     app_lvl_prefix: appLvlPrefix,
-        //     // stage_nm: dbDetails.stage_nm,
-        // });
-
-        // // Use your configured endpoint
-        // const endpoint = ENDPOINTS.AGENT
-        //     ? `${API_BASE_URL}${ENDPOINTS.AGENT}`
-        //     : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`;
-
         let payload: any
-    let endpoint: string
+        let endpoint: string
 
- if (agentPresent?.trim().toLowerCase() === "yes" && selectedAgent?.trim()) {  
-      payload = {
-        query: {
-          aplctn_cd: aplctnCdValue,
-          app_id: APP_ID,
-          api_key: API_KEY,
-          app_lvl_prefix: appLvlPrefix,
-          session_id: sessionId,
-          database_nm: dbDetails.database_nm,
-          schema_nm: dbDetails.schema_nm,
-          agent_nm: selectedAgent,
-          thread_id: 0,
-          parent_message_id: 0,
-          prompt: {
-            messages: [
-              {
-                role: "user",
-                content: userInput,
-              },
-            ],
-          },
-          tool_choice: {},
-        },
-      }
-      endpoint = `${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`
-    } else {
-      payload = buildPayload({
-        prompt: userInput,
-        semanticModel: selectedModels.yaml,
-        searchModel: selectedModels.search,
-        model: DEFAULT_MODEL,
-        sessionId,
-        selectedAppId,
-        database_nm: dbDetails.database_nm,
-        schema_nm: dbDetails.schema_nm,
-        app_lvl_prefix: appLvlPrefix,
-      })
-      endpoint = ENDPOINTS.AGENT ? `${API_BASE_URL}${ENDPOINTS.AGENT}` : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`
-    }
+        if (agentPresent?.trim().toLowerCase() === "yes" && selectedAgent?.trim()) {
+            payload = {
+                query: {
+                    aplctn_cd: aplctnCdValue,
+                    app_id: APP_ID,
+                    api_key: API_KEY,
+                    app_lvl_prefix: appLvlPrefix,
+                    session_id: sessionId,
+                    database_nm: dbDetails.database_nm,
+                    schema_nm: dbDetails.schema_nm,
+                    agent_nm: selectedAgent,
+                    thread_id: 0,
+                    parent_message_id: 0,
+                    prompt: {
+                        messages: [
+                            {
+                                role: "user",
+                                content: userInput,
+                            },
+                        ],
+                    },
+                    tool_choice: {},
+                },
+            }
+            endpoint = `${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`
+        } else {
+            payload = buildPayload({
+                prompt: userInput,
+                semanticModel: selectedModels.yaml,
+                searchModel: selectedModels.search,
+                model: DEFAULT_MODEL,
+                sessionId,
+                selectedAppId,
+                database_nm: dbDetails.database_nm,
+                schema_nm: dbDetails.schema_nm,
+                app_lvl_prefix: appLvlPrefix,
+            })
+            endpoint = ENDPOINTS.AGENT ? `${API_BASE_URL}${ENDPOINTS.AGENT}` : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`
+        }
 
 
         const response = await fetch(endpoint, {
@@ -371,9 +351,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                         break;
 
                     case "response.tool_result":
-                        // if (data.content?.[0]?.json?.sql) {
-                        //   sqlContent = data.content[0].json.sql;
-                        // }
+
                         if (data.content?.[0]?.json?.sql) {
                             sqlContent = data.content[0].json.sql;
                         }
@@ -420,21 +398,6 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                         if (data.content) {
                             const thinkingContent = data.content.find((item: any) => item.type === "thinking");
                             const textContent = data.content.find((item: any) => item.type === "text");
-
-                            //   setMessages((prev) =>
-                            //     prev.map((msg) =>
-                            //       msg.id === messageId
-                            //         ? {
-                            //             ...msg,
-                            //             thinking: thinkingContent?.thinking?.text || finalThinking,
-                            //             content: textContent?.text || finalText,
-                            //             sql: sqlContent,
-                            //             isStreaming: false,
-                            //             showDetails: false,
-                            //           }
-                            //         : msg
-                            //     )
-                            //   );
                             const chartContent = data.content.find((item: any) => item.type === "chart");
                             if (chartContent?.chart?.chart_spec) {
                                 chartSpec = chartContent.chart.chart_spec;
@@ -826,10 +789,10 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             setVegaChartData={setVegaChartData}
             isReset={isReset}
             toggleDetails={toggleDetails}
-             agentPresent={agentPresent}
-      setAgentPresent={setAgentPresent}
-      selectedAgent={selectedAgent}
-      setSelectedAgent={setSelectedAgent}
+            agentPresent={agentPresent}
+            setAgentPresent={setAgentPresent}
+            selectedAgent={selectedAgent}
+            setSelectedAgent={setSelectedAgent}
         />
     );
 };

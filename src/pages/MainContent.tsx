@@ -328,49 +328,6 @@ const MainContent = ({
     }
   }
 
-  // const fetchAgentWorkflows = async (agentName: string) => {
-  //   const payload = {
-  //     query: {
-  //       aplctn_cd: aplctnCdValue,
-  //       app_id: APP_ID,
-  //       api_key: API_KEY,
-  //       app_lvl_prefix: appLvlPrefix,
-  //       session_id: sessionId,
-  //       database_nm: dbDetails.database_nm,
-  //       schema_nm: selectedSchema,
-  //       agent_nm: agentName,
-  //       thread_id: 0,
-  //       parent_message_id: 0,
-  //       prompt: {
-  //         messages: [
-  //           {
-  //             role: "user",
-  //             content: "get distinct staff vp across applications",
-  //           },
-  //         ],
-  //       },
-  //       tool_choice: {},
-  //     },
-  //   }
-
-  //   try {
-  //     const response = await axios.post(`${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`, payload, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-
-  //     if (response.status === 200 && response.data) {
-  //       // Assuming the response contains workflow data
-  //       const workflows = response.data || []
-  //       setAgentWorkflows(workflows)
-  //     }
-  //   } catch (error: any) {
-  //     console.error("Error fetching agent workflows:", error)
-  //     setError("Failed to fetch agent workflows.")
-  //   }
-  // }
-
   // ADDED useEffect to show notification when dropdowns are ready
   useEffect(() => {
     if (agentPresent === "No" && selectedModels.yaml.length > 0 || selectedModels.search.length > 0) {

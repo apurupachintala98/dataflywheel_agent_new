@@ -287,6 +287,7 @@ const SQLCodeBlock = ({ code }) => {
 };
 
 const MessageWithFeedback = ({ message }) => {
+  console.log("messages", message);
 const isUser = useMemo(() => {
     // Check type first as it's more reliable, then fallback to fromUser
     if (message.type === "user") return true

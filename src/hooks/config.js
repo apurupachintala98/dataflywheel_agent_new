@@ -41,7 +41,10 @@ export const config = (
       FEEDBACK: "update_feedback/",
       DB_SCHEMA_LIST: "get_app_db_schm_lst",
       GET_PROMPTS: "prompts",
-      GET_VEGALITE_JSON: "txt2sql/generate_vega_lite_json"
+      GET_VEGALITE_JSON: "txt2sql/generate_vega_lite_json",
+      GET_AGENT_LIST: "get_agent_lst",
+      AGENT_WO_RUN: "agent_wo_run",
+      
     }
   }
 };

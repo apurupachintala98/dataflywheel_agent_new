@@ -158,6 +158,16 @@ const MainContent = ({
   const { APP_ID, API_KEY, DEFAULT_MODEL, APP_NM, DATABASE_NAME, SCHEMA_NAME, APP_LVL_PREFIX } = APP_CONFIG;
   const [availableSchemas, setAvailableSchemas] = useState<string[]>([]);
   const [selectedSchema, setSelectedSchema] = useState<string>("");
+
+  const [agentPresent, setAgentPresent] = useState<string>("")
+  const [agentList, setAgentList] = useState<string[]>([])
+  const [selectedAgent, setSelectedAgent] = useState<string>("")
+  const [agentWorkflows, setAgentWorkflows] = useState<any[]>([])
+  const [selectedWorkflow, setSelectedWorkflow] = useState<string>("")
+  const [agentAnchorEl, setAgentAnchorEl] = useState<HTMLElement | null>(null)
+  const [agentListAnchorEl, setAgentListAnchorEl] = useState<HTMLElement | null>(null)
+  const [workflowAnchorEl, setWorkflowAnchorEl] = useState<HTMLElement | null>(null)
+
   const DEBOUNCE_DELAY = 1500;
   const aplctnCdValue =
     selectedAppId === "POCGENAI"
@@ -178,6 +188,11 @@ const MainContent = ({
       setSelectedSchema("");
       setDbDetails({ database_nm: "", schema_nm: "" });
       setFileLists({ yaml: [], search: [] });
+      setAgentPresent("")
+      setSelectedAgent("")
+      setAgentList([])
+      setAgentWorkflows([])
+      setSelectedWorkflow("")
     }
   }, [isReset]);
 
@@ -232,7 +247,12 @@ const MainContent = ({
     setSelectedSchema("");
     setDbDetails((prev) => ({ ...prev, schema_nm: "" }));
     setFileLists({ yaml: [], search: [] });
-    setAvailableSchemas([]);
+    setAvailableSchemas([])
+    setAgentPresent("")
+    setSelectedAgent("")
+    setAgentList([])
+    setAgentWorkflows([])
+    setSelectedWorkflow("")
   }, [environment, appLvlPrefix]);
 
 
@@ -280,6 +300,81 @@ const MainContent = ({
     }
   };
 
+   const fetchAgentList = async () => {
+    const payload = {
+      query: {
+        aplctn_cd: aplctnCdValue,
+        app_id: APP_ID,
+        api_key: API_KEY,
+        app_lvl_prefix: appLvlPrefix,
+        session_id: sessionId,
+        database_nm: dbDetails.database_nm,
+        schema_nm: selectedSchema,
+      },
+    }
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}${ENDPOINTS.GET_AGENT_LIST}`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (response.status === 200 && response.data) {
+        // Assuming the response contains an array of agent names
+        const agents = response.data.agents || response.data || []
+        setAgentList(agents)
+      }
+    } catch (error: any) {
+      console.error("Error fetching agent list:", error)
+      setError("Failed to fetch agent list.")
+    }
+  }
+
+  const fetchAgentWorkflows = async (agentName: string) => {
+    const payload = {
+      query: {
+        aplctn_cd: aplctnCdValue,
+        app_id: APP_ID,
+        api_key: API_KEY,
+        app_lvl_prefix: appLvlPrefix,
+        session_id: sessionId,
+        database_nm: dbDetails.database_nm,
+        schema_nm: selectedSchema,
+        agent_nm: agentName,
+        thread_id: 0,
+        parent_message_id: 0,
+        prompt: {
+          messages: [
+            {
+              role: "user",
+              content: "get distinct staff vp across applications",
+            },
+          ],
+        },
+        tool_choice: {},
+      },
+    }
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (response.status === 200 && response.data) {
+        // Assuming the response contains workflow data
+        const workflows = response.data.workflows || response.data || []
+        setAgentWorkflows(workflows)
+      }
+    } catch (error: any) {
+      console.error("Error fetching agent workflows:", error)
+      setError("Failed to fetch agent workflows.")
+    }
+  }
+
+
   useEffect(() => {
     if (isLogOut) {
       setLoginInfo(null);
@@ -290,7 +385,6 @@ const MainContent = ({
       setShowLoginButton(false);
     }
   }, [isLogOut]);
-
 
   return (
     <>
@@ -366,7 +460,7 @@ const MainContent = ({
                   />
                 </>
               )}
-              {availableSchemas.length > 0 && (
+              {/* {availableSchemas.length > 0 && (
                 <Box sx={{ display: "inline-block" }}>
                   <Box
                     onClick={(e) => handleMenuClick(e, "schema")}
@@ -460,6 +554,249 @@ const MainContent = ({
                               {file}{" "}
                               {selectedModels[type === "chat" ? "yaml" : "search"].includes(file) &&
                                 "✓"}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <MenuItem disabled>No Files</MenuItem>
+                        )}
+                      </Menu>
+                    </Box>
+                  ))}
+                </Box>
+              )} */}
+
+               {/* Schema Dropdown */}
+              {availableSchemas.length > 0 && (
+                <Box sx={{ display: "inline-block" }}>
+                  <Box
+                    onClick={(e) => handleMenuClick(e, "schema")}
+                    sx={{
+                      color: "#000",
+                      px: 2,
+                      py: 1,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {selectedSchema || "Select Schema"} <FaAngleDown />
+                  </Box>
+                  <Menu
+                    anchorEl={anchorEls["schema"]}
+                    open={Boolean(anchorEls["schema"])}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
+                  >
+                    {availableSchemas.map((schema) => (
+                      <MenuItem
+                        key={schema}
+                        onClick={() => {
+                          setSelectedSchema(schema)
+                          setDbDetails({ database_nm: dbDetails.database_nm, schema_nm: schema })
+                          setAgentPresent("")
+                          setSelectedAgent("")
+                          setAgentList([])
+                          setAgentWorkflows([])
+                          setSelectedWorkflow("")
+                          handleMenuClose()
+                        }}
+                      >
+                        {schema}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+              )}
+
+              {selectedSchema && (
+                <Box sx={{ display: "inline-block" }}>
+                  <Box
+                    onClick={(e) => setAgentAnchorEl(e.currentTarget)}
+                    sx={{
+                      color: "#000",
+                      px: 2,
+                      py: 1,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {agentPresent || "Agent Present"} <FaAngleDown />
+                  </Box>
+                  <Menu
+                    anchorEl={agentAnchorEl}
+                    open={Boolean(agentAnchorEl)}
+                    onClose={() => setAgentAnchorEl(null)}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
+                  >
+                    <MenuItem
+                      onClick={async () => {
+                        setAgentPresent("Yes")
+                        setAgentAnchorEl(null)
+                        // Fetch agent list when "Yes" is selected
+                        await fetchAgentList()
+                      }}
+                    >
+                      Yes
+                    </MenuItem>
+                    <MenuItem
+                      onClick={async () => {
+                        setAgentPresent("No")
+                        setAgentAnchorEl(null)
+                        // Fetch semantic model and search when "No" is selected
+                        const yamlFiles = await ApiService.getCortexAnalystDetails(
+                          {
+                            database_nm: dbDetails.database_nm,
+                            schema_nm: selectedSchema,
+                            aplctn_cd: aplctnCdValue,
+                            session_id: sessionId,
+                          },
+                          environment,
+                          selectedAppId,
+                          appLvlPrefix,
+                        )
+
+                        const searchFiles = await ApiService.getCortexSearchDetails(
+                          {
+                            database_nm: dbDetails.database_nm,
+                            schema_nm: selectedSchema,
+                            aplctn_cd: aplctnCdValue,
+                            session_id: sessionId,
+                          },
+                          environment,
+                          selectedAppId,
+                          appLvlPrefix,
+                        )
+
+                        setFileLists({ yaml: yamlFiles || [], search: searchFiles || [] })
+                      }}
+                    >
+                      No
+                    </MenuItem>
+                  </Menu>
+                </Box>
+              )}
+
+              {agentPresent === "Yes" && agentList.length > 0 && (
+                <Box sx={{ display: "inline-block" }}>
+                  <Box
+                    onClick={(e) => setAgentListAnchorEl(e.currentTarget)}
+                    sx={{
+                      color: "#000",
+                      px: 2,
+                      py: 1,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {selectedAgent || "Select Agent"} <FaAngleDown />
+                  </Box>
+                  <Menu
+                    anchorEl={agentListAnchorEl}
+                    open={Boolean(agentListAnchorEl)}
+                    onClose={() => setAgentListAnchorEl(null)}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
+                  >
+                    {agentList.map((agent) => (
+                      <MenuItem
+                        key={agent}
+                        onClick={async () => {
+                          setSelectedAgent(agent)
+                          setAgentListAnchorEl(null)
+                          // Fetch workflows for selected agent
+                          await fetchAgentWorkflows(agent)
+                        }}
+                      >
+                        {agent}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+              )}
+
+              {selectedAgent && agentWorkflows.length > 0 && (
+                <Box sx={{ display: "inline-block" }}>
+                  <Box
+                    onClick={(e) => setWorkflowAnchorEl(e.currentTarget)}
+                    sx={{
+                      color: "#000",
+                      px: 2,
+                      py: 1,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {selectedWorkflow || "Select Workflow"} <FaAngleDown />
+                  </Box>
+                  <Menu
+                    anchorEl={workflowAnchorEl}
+                    open={Boolean(workflowAnchorEl)}
+                    onClose={() => setWorkflowAnchorEl(null)}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
+                  >
+                    {agentWorkflows.map((workflow, index) => (
+                      <MenuItem
+                        key={index}
+                        onClick={() => {
+                          setSelectedWorkflow(workflow.name || workflow)
+                          setWorkflowAnchorEl(null)
+                        }}
+                      >
+                        {workflow.name || workflow}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+              )}
+
+              {/* Semantic Model and Search Dropdowns - only show when "No" is selected */}
+              {agentPresent === "No" && selectedSchema && (
+                <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                  {(["chat", "search"] as const).map((type) => (
+                    <Box key={type} sx={{ display: "inline-block" }}>
+                      <Box
+                        onClick={(e) => handleMenuClick(e, type)}
+                        sx={{
+                          color: "#000",
+                          px: 2,
+                          py: 1,
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        {type === "chat" ? "Semantic Model" : "Search"} <FaAngleDown />
+                      </Box>
+                      <Menu
+                        anchorEl={anchorEls[type]}
+                        open={Boolean(anchorEls[type])}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                        transformOrigin={{ vertical: "top", horizontal: "left" }}
+                      >
+                        {fileLists[type === "chat" ? "yaml" : "search"].length ? (
+                          fileLists[type === "chat" ? "yaml" : "search"].map((file) => (
+                            <MenuItem
+                              key={file}
+                              onClick={() => handleModelSelect(file, type === "chat" ? "yaml" : "search")}
+                            >
+                              {file} {selectedModels[type === "chat" ? "yaml" : "search"].includes(file) && "✓"}
                             </MenuItem>
                           ))
                         ) : (

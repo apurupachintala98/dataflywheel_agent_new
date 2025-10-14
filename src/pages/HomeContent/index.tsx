@@ -106,6 +106,9 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         selectedAppId === "POCGENAI"
             ? "edagnai"
             : selectedAppId.toLowerCase();
+    
+              const [agentPresent, setAgentPresent] = useState<string>("")
+  const [selectedAgent, setSelectedAgent] = useState<string>("")
 
     useEffect(() => {
         setDbDetails((prev) => ({
@@ -232,23 +235,67 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
 
     const simulateStreamingResponse = async (messageId: string, userInput: string) => {
         // Build the payload using your existing buildPayload utility
-        const payload = buildPayload({
-            prompt: userInput,
-            semanticModel: selectedModels.yaml,
-            searchModel: selectedModels.search,
-            model: DEFAULT_MODEL,
-            sessionId,
-            selectedAppId,
-            database_nm: dbDetails.database_nm,
-            schema_nm: dbDetails.schema_nm,
-            app_lvl_prefix: appLvlPrefix,
-            // stage_nm: dbDetails.stage_nm,
-        });
+        // const payload = buildPayload({
+        //     prompt: userInput,
+        //     semanticModel: selectedModels.yaml,
+        //     searchModel: selectedModels.search,
+        //     model: DEFAULT_MODEL,
+        //     sessionId,
+        //     selectedAppId,
+        //     database_nm: dbDetails.database_nm,
+        //     schema_nm: dbDetails.schema_nm,
+        //     app_lvl_prefix: appLvlPrefix,
+        //     // stage_nm: dbDetails.stage_nm,
+        // });
 
-        // Use your configured endpoint
-        const endpoint = ENDPOINTS.AGENT
-            ? `${API_BASE_URL}${ENDPOINTS.AGENT}`
-            : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`;
+        // // Use your configured endpoint
+        // const endpoint = ENDPOINTS.AGENT
+        //     ? `${API_BASE_URL}${ENDPOINTS.AGENT}`
+        //     : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`;
+
+        let payload: any
+    let endpoint: string
+
+    if (agentPresent === "Yes" && selectedAgent) {
+      payload = {
+        query: {
+          aplctn_cd: aplctnCdValue,
+          app_id: APP_ID,
+          api_key: API_KEY,
+          app_lvl_prefix: appLvlPrefix,
+          session_id: sessionId,
+          database_nm: dbDetails.database_nm,
+          schema_nm: dbDetails.schema_nm,
+          agent_nm: selectedAgent,
+          thread_id: 0,
+          parent_message_id: 0,
+          prompt: {
+            messages: [
+              {
+                role: "user",
+                content: userInput,
+              },
+            ],
+          },
+          tool_choice: {},
+        },
+      }
+      endpoint = `${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`
+    } else {
+      payload = buildPayload({
+        prompt: userInput,
+        semanticModel: selectedModels.yaml,
+        searchModel: selectedModels.search,
+        model: DEFAULT_MODEL,
+        sessionId,
+        selectedAppId,
+        database_nm: dbDetails.database_nm,
+        schema_nm: dbDetails.schema_nm,
+        app_lvl_prefix: appLvlPrefix,
+      })
+      endpoint = ENDPOINTS.AGENT ? `${API_BASE_URL}${ENDPOINTS.AGENT}` : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`
+    }
+
 
         const response = await fetch(endpoint, {
             method: "POST",
@@ -325,7 +372,6 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                             sqlContent = data.content[0].json.sql;
                         }
 
-                        // ✅ Add chart support
                         if (data.content[0].json.charts && data.content[0].json.charts.length > 0) {
                             chartSpec = data.content[0].json.charts[0];
                             setMessages((prev) =>
@@ -774,6 +820,10 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             setVegaChartData={setVegaChartData}
             isReset={isReset}
             toggleDetails={toggleDetails}
+             agentPresent={agentPresent}
+      setAgentPresent={setAgentPresent}
+      selectedAgent={selectedAgent}
+      setSelectedAgent={setSelectedAgent}
         />
     );
 };

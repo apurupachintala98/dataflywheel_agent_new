@@ -93,6 +93,10 @@ interface MainContentProps {
   setCheckIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   isLogOut: boolean;
   isReset: boolean;
+  agentPresent: string
+  setAgentPresent: React.Dispatch<React.SetStateAction<string>>
+  selectedAgent: string
+  setSelectedAgent: React.Dispatch<React.SetStateAction<string>>
 }
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -162,11 +166,9 @@ const MainContent = ({
   const [agentPresent, setAgentPresent] = useState<string>("")
   const [agentList, setAgentList] = useState<string[]>([])
   const [selectedAgent, setSelectedAgent] = useState<string>("")
-  const [agentWorkflows, setAgentWorkflows] = useState<any[]>([])
-  const [selectedWorkflow, setSelectedWorkflow] = useState<string>("")
   const [agentAnchorEl, setAgentAnchorEl] = useState<HTMLElement | null>(null)
   const [agentListAnchorEl, setAgentListAnchorEl] = useState<HTMLElement | null>(null)
-  const [workflowAnchorEl, setWorkflowAnchorEl] = useState<HTMLElement | null>(null)
+   const [showPromptNotification, setShowPromptNotification] = useState(false)
 
   const DEBOUNCE_DELAY = 1500;
   const aplctnCdValue =
@@ -191,8 +193,7 @@ const MainContent = ({
       setAgentPresent("")
       setSelectedAgent("")
       setAgentList([])
-      setAgentWorkflows([])
-      setSelectedWorkflow("")
+      setShowPromptNotification(false)
     }
   }, [isReset]);
 
@@ -251,9 +252,8 @@ const MainContent = ({
     setAgentPresent("")
     setSelectedAgent("")
     setAgentList([])
-    setAgentWorkflows([])
-    setSelectedWorkflow("")
-  }, [environment, appLvlPrefix]);
+    setShowPromptNotification(false)
+  }, [environment, appLvlPrefix])
 
 
   const handleFinalLogin = async () => {
@@ -331,49 +331,59 @@ const MainContent = ({
     }
   }
 
-  const fetchAgentWorkflows = async (agentName: string) => {
-    const payload = {
-      query: {
-        aplctn_cd: aplctnCdValue,
-        app_id: APP_ID,
-        api_key: API_KEY,
-        app_lvl_prefix: appLvlPrefix,
-        session_id: sessionId,
-        database_nm: dbDetails.database_nm,
-        schema_nm: selectedSchema,
-        agent_nm: agentName,
-        thread_id: 0,
-        parent_message_id: 0,
-        prompt: {
-          messages: [
-            {
-              role: "user",
-              content: "get distinct staff vp across applications",
-            },
-          ],
-        },
-        tool_choice: {},
-      },
+  // const fetchAgentWorkflows = async (agentName: string) => {
+  //   const payload = {
+  //     query: {
+  //       aplctn_cd: aplctnCdValue,
+  //       app_id: APP_ID,
+  //       api_key: API_KEY,
+  //       app_lvl_prefix: appLvlPrefix,
+  //       session_id: sessionId,
+  //       database_nm: dbDetails.database_nm,
+  //       schema_nm: selectedSchema,
+  //       agent_nm: agentName,
+  //       thread_id: 0,
+  //       parent_message_id: 0,
+  //       prompt: {
+  //         messages: [
+  //           {
+  //             role: "user",
+  //             content: "get distinct staff vp across applications",
+  //           },
+  //         ],
+  //       },
+  //       tool_choice: {},
+  //     },
+  //   }
+
+  //   try {
+  //     const response = await axios.post(`${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`, payload, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+
+  //     if (response.status === 200 && response.data) {
+  //       // Assuming the response contains workflow data
+  //       const workflows = response.data || []
+  //       setAgentWorkflows(workflows)
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Error fetching agent workflows:", error)
+  //     setError("Failed to fetch agent workflows.")
+  //   }
+  // }
+
+  // ADDED useEffect to show notification when dropdowns are ready
+  useEffect(() => {
+    if (agentPresent === "No" && selectedModels.yaml.length > 0 && selectedModels.search.length > 0) {
+      setShowPromptNotification(true)
+    } else if (agentPresent === "Yes" && selectedAgent) {
+      setShowPromptNotification(true)
+    } else {
+      setShowPromptNotification(false)
     }
-
-    try {
-      const response = await axios.post(`${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      if (response.status === 200 && response.data) {
-        // Assuming the response contains workflow data
-        const workflows = response.data.workflows || response.data || []
-        setAgentWorkflows(workflows)
-      }
-    } catch (error: any) {
-      console.error("Error fetching agent workflows:", error)
-      setError("Failed to fetch agent workflows.")
-    }
-  }
-
+  }, [agentPresent, selectedModels, selectedAgent])
 
   useEffect(() => {
     if (isLogOut) {
@@ -599,8 +609,6 @@ const MainContent = ({
                           setAgentPresent("")
                           setSelectedAgent("")
                           setAgentList([])
-                          setAgentWorkflows([])
-                          setSelectedWorkflow("")
                           handleMenuClose()
                         }}
                       >
@@ -713,50 +721,9 @@ const MainContent = ({
                         onClick={async () => {
                           setSelectedAgent(agent)
                           setAgentListAnchorEl(null)
-                          // Fetch workflows for selected agent
-                          await fetchAgentWorkflows(agent)
                         }}
                       >
                         {agent}
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                </Box>
-              )}
-
-              {selectedAgent && agentWorkflows.length > 0 && (
-                <Box sx={{ display: "inline-block" }}>
-                  <Box
-                    onClick={(e) => setWorkflowAnchorEl(e.currentTarget)}
-                    sx={{
-                      color: "#000",
-                      px: 2,
-                      py: 1,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    {selectedWorkflow || "Select Workflow"} <FaAngleDown />
-                  </Box>
-                  <Menu
-                    anchorEl={workflowAnchorEl}
-                    open={Boolean(workflowAnchorEl)}
-                    onClose={() => setWorkflowAnchorEl(null)}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                    transformOrigin={{ vertical: "top", horizontal: "left" }}
-                  >
-                    {agentWorkflows.map((workflow, index) => (
-                      <MenuItem
-                        key={index}
-                        onClick={() => {
-                          setSelectedWorkflow(workflow.name || workflow)
-                          setWorkflowAnchorEl(null)
-                        }}
-                      >
-                        {workflow.name || workflow}
                       </MenuItem>
                     ))}
                   </Menu>
@@ -1113,6 +1080,53 @@ const MainContent = ({
                   Data at your Fingertips
                 </Typography>
               )}
+
+              {/* ADDED animated notification */}
+              {showPromptNotification && messages.length === 0 && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: "calc(50% + 120px)",
+                    backgroundColor: "#4CAF50",
+                    color: "#fff",
+                    padding: "12px 24px",
+                    borderRadius: "24px",
+                    boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
+                    animation: "slideInBounce 0.6s ease-out",
+                    "@keyframes slideInBounce": {
+                      "0%": {
+                        transform: "translateY(-20px)",
+                        opacity: 0,
+                      },
+                      "60%": {
+                        transform: "translateY(5px)",
+                        opacity: 1,
+                      },
+                      "100%": {
+                        transform: "translateY(0)",
+                        opacity: 1,
+                      },
+                    },
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      bottom: "-8px",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: 0,
+                      height: 0,
+                      borderLeft: "8px solid transparent",
+                      borderRight: "8px solid transparent",
+                      borderTop: "8px solid #4CAF50",
+                    },
+                  }}
+                >
+                  <Typography variant="body1" sx={{ fontWeight: 600, fontSize: "14px" }}>
+                    ✨ Ready! Enter your prompt below to get started
+                  </Typography>
+                </Box>
+              )}
+
               <Box
                 sx={{
                   display: "flex",

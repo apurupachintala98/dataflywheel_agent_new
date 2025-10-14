@@ -212,7 +212,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         setMessages((prev) => [...prev, assistantMessage]);
 
         setInputValue("");
-        setIsLoading(true);
+        // setIsLoading(true);
         setSubmitted(true);
 
         try {

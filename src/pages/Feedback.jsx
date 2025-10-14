@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo  } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Button, Box, IconButton, Typography, Tooltip, TextField } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -288,7 +288,7 @@ const SQLCodeBlock = ({ code }) => {
 
 const MessageWithFeedback = ({ message }) => {
   console.log("messages", message);
-const isUser = useMemo(() => {
+  const isUser = useMemo(() => {
     // Check type first as it's more reliable, then fallback to fromUser
     if (message.type === "user") return true
     if (message.type === "assistant") return false
@@ -621,55 +621,57 @@ const isUser = useMemo(() => {
   // );
 
   return (
-  <div className="w-full my-3">
-    {/* Each message row is full width */}
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      {isUser ? (
-        // USER MESSAGE (Right-aligned)
-        <div className="bg-blue-500 text-white px-4 py-3 rounded-2xl shadow-md rounded-br-none text-sm max-w-[80%] whitespace-pre-wrap">
-          {message.text}
-        </div>
-      ) : (
-        // ASSISTANT MESSAGE (Left-aligned)
-        <div className="max-w-[80%] bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-md text-gray-900 text-sm">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            {/* Thinking */}
-            {message.thinking && (
-              <Box
-                sx={{
-                  border: "1px solid #ccc",
-                  borderRadius: "12px",
-                  padding: "12px",
-                  transition: "all 0.3s ease",
-                }}
-              >
-                {message.isStreaming && (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Loader src={loading} alt="Thinking..." />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                      Thinking...
-                    </Typography>
-                  </Box>
-               )}
+    <div className="w-full my-3">
+      {/* Each message row is full width */}
+      <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+        {isUser ? (
+          // USER MESSAGE (Right-aligned)
+          <div className="bg-blue-500 text-white px-4 py-3 rounded-2xl shadow-md rounded-br-none text-sm max-w-[80%] whitespace-pre-wrap">
+            {message.text}
+          </div>
+        ) : (
+          // ASSISTANT MESSAGE (Left-aligned)
+          <div className="max-w-[80%] bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-md text-gray-900 text-sm">
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+              }}
+            >
+              {/* Thinking */}
+              {message.thinking && (
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "12px",
+                    padding: "12px",
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  {message.isStreaming && (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Loader src={loading} alt="Thinking..." />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                        Thinking...
+                      </Typography>
+                    </Box>
+                  )}
                   <Box>
-                    <Button
-                      size="small"
-                      variant="text"
-                      sx={{
-                        textTransform: "none",
-                        fontSize: "0.9rem",
-                        color: "#1976d2",
-                      }}
-                      onClick={() => setDetailsOpen((prev) => !prev)}
-                    >
-                      {detailsOpen ? "Hide Details" : "Show Details"}
-                    </Button>
+                    {!message.isStreaming && (
+                      <Button
+                        size="small"
+                        variant="text"
+                        sx={{
+                          textTransform: "none",
+                          fontSize: "0.9rem",
+                          color: "#1976d2",
+                        }}
+                        onClick={() => setDetailsOpen((prev) => !prev)}
+                      >
+                        {detailsOpen ? "Hide Details" : "Show Details"}
+                      </Button>
+                    )}
                     {detailsOpen && (
                       <Typography
                         variant="body2"
@@ -686,196 +688,196 @@ const isUser = useMemo(() => {
                       />
                     )}
                   </Box>
-              </Box>
-            )}
+                </Box>
+              )}
 
-            {/* SQL */}
-            {message.sql && (
-              <Box sx={{ border: "1px solid #ccc", borderRadius: "12px", padding: "12px", backgroundColor: "#fff" }}>
-                <SQLCodeBlock code={message.sql} />
-              </Box>
-            )}
+              {/* SQL */}
+              {message.sql && (
+                <Box sx={{ border: "1px solid #ccc", borderRadius: "12px", padding: "12px", backgroundColor: "#fff" }}>
+                  <SQLCodeBlock code={message.sql} />
+                </Box>
+              )}
 
-            {/* Content */}
-            {message.content && (
-              <Box sx={{ border: "1px solid #ccc", borderRadius: "12px", padding: "12px", backgroundColor: "#fff" }}>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: "#555",
-                    lineHeight: 1.6,
-                    "& strong": { fontWeight: 600 },
-                    "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
-                    "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
-                    "& li": { marginBottom: "4px" },
-                    "& p": { marginBottom: "8px" },
-                  }}
-                  dangerouslySetInnerHTML={{ __html: formatRichText(message.content) }}
-                />
-              </Box>
-            )}
-
-            {/* Chart / Table block */}
-            {message.chart && (() => {
-              const chartSpec = JSON.parse(message.chart);
-              const chartData = chartSpec?.data?.values || [];
-              const chartFields = chartData.length > 0 ? Object.keys(chartData[0]) : [];
-
-              chartSpec.autosize = { type: "fit-y", contains: "padding" };
-              chartSpec.width = 600;
-
-              return (
-                <Box sx={{
-                  border: "1px solid #ccc",
-                  borderRadius: "12px",
-                  padding: "12px",
-                  backgroundColor: "#fff",
-                  maxWidth: "100%",
-                  overflowX: "hidden",
-                  overflowY: "auto",
-                  boxShadow: "0px 2px 6px rgba(0,0,0,0.05)",
-                  marginTop: "12px",
-                }}>
-                  {/* Tabs + Download Button */}
-                  <Box
+              {/* Content */}
+              {message.content && (
+                <Box sx={{ border: "1px solid #ccc", borderRadius: "12px", padding: "12px", backgroundColor: "#fff" }}>
+                  <Typography
+                    variant="body2"
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 0,
+                      color: "#555",
+                      lineHeight: 1.6,
+                      "& strong": { fontWeight: 600 },
+                      "& ul": { paddingLeft: "1.2em", marginBottom: "8px" },
+                      "& ol": { paddingLeft: "1.2em", marginBottom: "8px" },
+                      "& li": { marginBottom: "4px" },
+                      "& p": { marginBottom: "8px" },
                     }}
-                  >
-                    <Tabs
-                      value={activeTab}
-                      onChange={handleTabChange}
-                      textColor="primary"
-                      indicatorColor="primary"
-                      sx={{ minHeight: 0, height: 36 }}
-                      TabIndicatorProps={{ style: { height: 2 } }}
+                    dangerouslySetInnerHTML={{ __html: formatRichText(message.content) }}
+                  />
+                </Box>
+              )}
+
+              {/* Chart / Table block */}
+              {message.chart && (() => {
+                const chartSpec = JSON.parse(message.chart);
+                const chartData = chartSpec?.data?.values || [];
+                const chartFields = chartData.length > 0 ? Object.keys(chartData[0]) : [];
+
+                chartSpec.autosize = { type: "fit-y", contains: "padding" };
+                chartSpec.width = 600;
+
+                return (
+                  <Box sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "12px",
+                    padding: "12px",
+                    backgroundColor: "#fff",
+                    maxWidth: "100%",
+                    overflowX: "hidden",
+                    overflowY: "auto",
+                    boxShadow: "0px 2px 6px rgba(0,0,0,0.05)",
+                    marginTop: "12px",
+                  }}>
+                    {/* Tabs + Download Button */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 0,
+                      }}
                     >
-                      <Tab
-                        label="Chart"
-                        value="chart"
-                        sx={{
-                          minHeight: 0,
-                          height: 36,
-                          textTransform: "none",
-                          fontWeight: 600,
-                          border: "1px solid #ccc",
-                          borderRadius: "8px 8px 0 0",
-                          backgroundColor: "#f5f5f5",
-                          boxShadow: activeTab === "chart" ? "0px 2px 4px rgba(0,0,0,0.1)" : "none",
-                          marginRight: 1,
-                        }}
-                      />
-                      <Tab
-                        label="Table"
-                        value="table"
-                        sx={{
-                          minHeight: 0,
-                          height: 36,
-                          textTransform: "none",
-                          fontWeight: 600,
-                          border: "1px solid #ccc",
-                          borderRadius: "8px 8px 0 0",
-                          backgroundColor: "#f5f5f5",
-                          boxShadow: activeTab === "table" ? "0px 2px 4px rgba(0,0,0,0.1)" : "none",
-                        }}
-                      />
-                    </Tabs>
-
-                    {/* Show button only when table tab is active */}
-                    {activeTab === "table" && chartData.length > 0 && (
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => downloadCSV(chartData, chartFields)}
-                        sx={{ height: 30 }}
+                      <Tabs
+                        value={activeTab}
+                        onChange={handleTabChange}
+                        textColor="primary"
+                        indicatorColor="primary"
+                        sx={{ minHeight: 0, height: 36 }}
+                        TabIndicatorProps={{ style: { height: 2 } }}
                       >
-                        Download CSV
-                      </Button>
-                    )}
-                  </Box>
+                        <Tab
+                          label="Chart"
+                          value="chart"
+                          sx={{
+                            minHeight: 0,
+                            height: 36,
+                            textTransform: "none",
+                            fontWeight: 600,
+                            border: "1px solid #ccc",
+                            borderRadius: "8px 8px 0 0",
+                            backgroundColor: "#f5f5f5",
+                            boxShadow: activeTab === "chart" ? "0px 2px 4px rgba(0,0,0,0.1)" : "none",
+                            marginRight: 1,
+                          }}
+                        />
+                        <Tab
+                          label="Table"
+                          value="table"
+                          sx={{
+                            minHeight: 0,
+                            height: 36,
+                            textTransform: "none",
+                            fontWeight: 600,
+                            border: "1px solid #ccc",
+                            borderRadius: "8px 8px 0 0",
+                            backgroundColor: "#f5f5f5",
+                            boxShadow: activeTab === "table" ? "0px 2px 4px rgba(0,0,0,0.1)" : "none",
+                          }}
+                        />
+                      </Tabs>
 
-                  <Box sx={{ borderBottom: "1px solid #ccc", marginBottom: 2 }} />
-
-                  {/* Chart View */}
-                  {activeTab === "chart" && (
-                    <Box sx={{ width: "100%", overflowX: "auto" }}>
-                      <Box
-                        sx={{
-                          minWidth: "600px",
-                          width: chartSpec.width ? `${chartSpec.width}px` : "100%",
-                          paddingBottom: "8px",
-                        }}
-                      >
-                        <VegaLite spec={chartSpec} />
-                      </Box>
+                      {/* Show button only when table tab is active */}
+                      {activeTab === "table" && chartData.length > 0 && (
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => downloadCSV(chartData, chartFields)}
+                          sx={{ height: 30 }}
+                        >
+                          Download CSV
+                        </Button>
+                      )}
                     </Box>
-                  )}
 
-                  {/* Table View */}
-                  {activeTab === "table" && chartData.length > 0 && (
-                    <Box sx={{ minWidth: "600px", width: "100%" }}>
-                      <table
-                        style={{
-                          width: "100%",
-                          borderCollapse: "collapse",
-                          marginTop: "8px",
-                          fontSize: "0.875rem",
-                          backgroundColor: "#fff",
-                        }}
-                      >
-                        <thead>
-                          <tr>
-                            {chartFields.map((field) => (
-                              <th
-                                key={field}
-                                style={{
-                                  textAlign: "left",
-                                  padding: "6px 8px",
-                                  borderBottom: "1px solid #ddd",
-                                  fontSize: "0.875rem",
-                                  fontWeight: 600,
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {field.replace(/_/g, " ")}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {chartData.map((row, index) => (
-                            <tr key={index}>
+                    <Box sx={{ borderBottom: "1px solid #ccc", marginBottom: 2 }} />
+
+                    {/* Chart View */}
+                    {activeTab === "chart" && (
+                      <Box sx={{ width: "100%", overflowX: "auto" }}>
+                        <Box
+                          sx={{
+                            minWidth: "600px",
+                            width: chartSpec.width ? `${chartSpec.width}px` : "100%",
+                            paddingBottom: "8px",
+                          }}
+                        >
+                          <VegaLite spec={chartSpec} />
+                        </Box>
+                      </Box>
+                    )}
+
+                    {/* Table View */}
+                    {activeTab === "table" && chartData.length > 0 && (
+                      <Box sx={{ minWidth: "600px", width: "100%" }}>
+                        <table
+                          style={{
+                            width: "100%",
+                            borderCollapse: "collapse",
+                            marginTop: "8px",
+                            fontSize: "0.875rem",
+                            backgroundColor: "#fff",
+                          }}
+                        >
+                          <thead>
+                            <tr>
                               {chartFields.map((field) => (
-                                <td
+                                <th
                                   key={field}
                                   style={{
+                                    textAlign: "left",
                                     padding: "6px 8px",
-                                    borderBottom: "1px solid #eee",
+                                    borderBottom: "1px solid #ddd",
                                     fontSize: "0.875rem",
+                                    fontWeight: 600,
                                     whiteSpace: "nowrap",
                                   }}
                                 >
-                                  {row[field]}
-                                </td>
+                                  {field.replace(/_/g, " ")}
+                                </th>
                               ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </Box>
-                  )}
-                </Box>
-              );
-            })()}
-          </Box>
-        </div>
-      )}
+                          </thead>
+                          <tbody>
+                            {chartData.map((row, index) => (
+                              <tr key={index}>
+                                {chartFields.map((field) => (
+                                  <td
+                                    key={field}
+                                    style={{
+                                      padding: "6px 8px",
+                                      borderBottom: "1px solid #eee",
+                                      fontSize: "0.875rem",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {row[field]}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </Box>
+                    )}
+                  </Box>
+                );
+              })()}
+            </Box>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 
 };
 

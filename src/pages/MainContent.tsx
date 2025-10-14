@@ -222,7 +222,6 @@ const MainContent = ({
       );
 
       const result = await response.json();
-      console.log("result", result);
       if (response.ok && result?.app_cd?.length) {
         setAppIds(result.app_cd); // Store app_cd list
         setUserNm(credentials.anthemId);
@@ -279,7 +278,6 @@ const MainContent = ({
         },
       );
 
-      console.log("API Response:", response.data);
 
       if (response.status === 200) {
         const { database, schema_nm } = response.data;
@@ -287,8 +285,6 @@ const MainContent = ({
         const selectedDatabase = database?.[0] || "";
         setAvailableSchemas(schema_nm || []);
         setDbDetails({ database_nm: selectedDatabase, schema_nm: "" });
-        console.log(setDbDetails);
-        console.log(selectedDatabase);
         setOpenLoginDialog(false);
         // setLoginInfo(`${credentials.anthemId} (${selectedAppId})`);
         setCheckIsLogin(true);
@@ -320,7 +316,6 @@ const MainContent = ({
           "Content-Type": "application/json",
         },
       })
-      console.log(response);
       if (response.status === 200 && response.data) {
         // Assuming the response contains an array of agent names
         const agents = response.data.agent_names || []

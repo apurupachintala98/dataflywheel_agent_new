@@ -118,6 +118,14 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         setSelectedModels({ yaml: [], search: [] });
     }, [environment, appLvlPrefix]);
 
+      useEffect(() => {
+    console.log("[v0] HomeContent - agentPresent changed:", agentPresent)
+  }, [agentPresent])
+
+  useEffect(() => {
+    console.log("[v0] HomeContent - selectedAgent changed:", selectedAgent)
+  }, [selectedAgent])
+
     const handleMenuClick = (e: React.MouseEvent<HTMLElement>, type: keyof AnchorElState) => {
         const target = e.currentTarget as HTMLElement;
         if (type === "upload") {
@@ -183,6 +191,12 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
 
         if (!inputValue.trim() || isLoading) return;
 
+           console.log("[v0] handleSubmit - Current state:")
+    console.log("[v0] - agentPresent:", agentPresent)
+    console.log("[v0] - selectedAgent:", selectedAgent)
+    console.log("[v0] - dbDetails:", dbDetails)
+    console.log("[v0] - selectedModels:", selectedModels)
+
         const userMessage = {
             id: `user-${Date.now()}`,
             type: "user" as const,
@@ -235,9 +249,24 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
 
     const simulateStreamingResponse = async (messageId: string, userInput: string) => {
 
-         console.log("[v0] Agent Present:", agentPresent)
-    console.log("[v0] Selected Agent:", selectedAgent)
-    console.log("[v0] Condition check:", agentPresent?.trim().toLowerCase() === "yes", "&&", !!selectedAgent)
+        console.log("[v0] ========== simulateStreamingResponse START ==========")
+    console.log("[v0] Agent Present:", agentPresent, "| Type:", typeof agentPresent, "| Length:", agentPresent?.length)
+    console.log(
+      "[v0] Selected Agent:",
+      selectedAgent,
+      "| Type:",
+      typeof selectedAgent,
+      "| Length:",
+      selectedAgent?.length,
+    )
+    console.log("[v0] Trimmed agentPresent:", agentPresent?.trim())
+    console.log("[v0] Lowercase agentPresent:", agentPresent?.trim().toLowerCase())
+    console.log("[v0] Condition parts:")
+    console.log("[v0]   - agentPresent?.trim().toLowerCase() === 'yes':", agentPresent?.trim().toLowerCase() === "yes")
+    console.log("[v0]   - selectedAgent?.trim():", selectedAgent?.trim())
+    console.log("[v0]   - !!selectedAgent?.trim():", !!selectedAgent?.trim())
+    console.log("[v0] Final condition result:", agentPresent?.trim().toLowerCase() === "yes" && !!selectedAgent?.trim())
+
         // Build the payload using your existing buildPayload utility
         // const payload = buildPayload({
         //     prompt: userInput,
@@ -260,7 +289,8 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         let payload: any
     let endpoint: string
 
- if (agentPresent?.trim().toLowerCase() === "yes" && selectedAgent?.trim()) {    
+ if (agentPresent?.trim().toLowerCase() === "yes" && selectedAgent?.trim()) {  
+        console.log("[v0] ✅ Using AGENT_WO_RUN endpoint")  
       payload = {
         query: {
           aplctn_cd: aplctnCdValue,
@@ -286,6 +316,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
       }
       endpoint = `${API_BASE_URL}${ENDPOINTS.AGENT_WO_RUN}`
     } else {
+          console.log("[v0] ❌ Using default agent_v2 endpoint (condition failed)")
       payload = buildPayload({
         prompt: userInput,
         semanticModel: selectedModels.yaml,
@@ -299,6 +330,9 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
       })
       endpoint = ENDPOINTS.AGENT ? `${API_BASE_URL}${ENDPOINTS.AGENT}` : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`
     }
+ console.log("[v0] Final endpoint:", endpoint)
+    console.log("[v0] Final payload:", JSON.stringify(payload, null, 2))
+    console.log("[v0] ========== simulateStreamingResponse END ==========")
 
 
         const response = await fetch(endpoint, {

@@ -67,7 +67,6 @@ const Feedback = ({ message }) => {
       `feedbk_cmnt_txt=${encodeURIComponent(feedbk_cmnt_txt)}`;
     try {
       const response = await axios.post(url);
-      console.log("Feedback sent successfully:", response.data);
       toast.success("Feedback submitted successfully!", { position: "top-right" });
       if (action === true) setThumb("up");
       else if (action === false) setThumb("down");
@@ -288,7 +287,6 @@ const SQLCodeBlock = ({ code }) => {
 };
 
 const MessageWithFeedback = ({ message }) => {
-  console.log("msg", message);
 const isUser = useMemo(() => {
     // Check type first as it's more reliable, then fallback to fromUser
     if (message.type === "user") return true

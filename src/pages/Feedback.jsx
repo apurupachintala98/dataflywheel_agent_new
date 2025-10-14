@@ -244,65 +244,6 @@ const Feedback = ({ message }) => {
   );
 };
 
-// // Reusable SQL code block
-// const SQLCodeBlock = ({ code }) => {
-//   return (
-//     <div className="border rounded-lg overflow-hidden">
-//       <div className="bg-muted px-3 py-2 text-sm font-medium">Generated SQL</div>
-//       <pre className="bg-gray-900 text-gray-100 p-4 overflow-x-auto text-sm">
-//         <code className="language-sql">{code}</code>
-//       </pre>
-//     </div>
-//   )
-// }
-
-// // Main message renderer
-// const MessageWithFeedback = ({ message, handleGraphClick }) => {
-//   return (
-//     <div className="space-y-3">
-//       {message.thinking && !message.isStreaming && (
-//         <Accordion type="single" collapsible>
-//           <AccordionItem value="thinking">
-//             <AccordionTrigger className="text-sm font-medium justify-end">
-//               Show Details
-//             </AccordionTrigger>
-//             <AccordionContent>
-//               <div className="text-sm text-muted-foreground whitespace-pre-wrap">
-//                 {message.thinking}
-//               </div>
-//             </AccordionContent>
-//           </AccordionItem>
-//         </Accordion>
-//       )}
-
-//       {message.thinking && message.isStreaming && (
-//         <div className="border rounded-lg p-3 bg-muted/50">
-//           <div className="text-sm font-medium mb-2 flex items-center gap-2">
-//             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-//             Thinking...
-//           </div>
-//           <div className="text-sm text-muted-foreground whitespace-pre-wrap">
-//             {message.thinking}
-//           </div>
-//         </div>
-//       )}
-
-//       {/* SQL code block */}
-//       {message.sql && <SQLCodeBlock code={message.sql} />}
-
-//       {/* Normal content */}
-//       {message.content && (
-//         <div className="whitespace-pre-wrap">
-//           {message.content}
-//           {message.isStreaming && (
-//             <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse"></span>
-//           )}
-//         </div>
-//       )}
-//     </div>
-//   )
-// }
-
 const SQLCodeBlock = ({ code }) => {
   const [copied, setCopied] = useState(false);
 
@@ -346,11 +287,11 @@ const SQLCodeBlock = ({ code }) => {
   );
 };
 
-// ✅ Main message renderer
 const MessageWithFeedback = ({ message }) => {
   console.log("msg", message);
- const isUser = useMemo(() => message.fromUser ?? message.type === "user", []);
-
+const isUser = useMemo(() => {
+    return message.fromUser === true || message.type === "user"
+  }, [message.fromUser, message.type])
   console.log(isUser);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");

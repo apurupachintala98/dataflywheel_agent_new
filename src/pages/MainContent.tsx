@@ -373,7 +373,7 @@ const MainContent = ({
 
   // ADDED useEffect to show notification when dropdowns are ready
   useEffect(() => {
-    if (agentPresent === "No" && selectedModels.yaml.length > 0 && selectedModels.search.length > 0) {
+    if (agentPresent === "No" && selectedModels.yaml.length > 0 || selectedModels.search.length > 0) {
       setShowPromptNotification(true)
     } else if (agentPresent === "Yes" && selectedAgent) {
       setShowPromptNotification(true)

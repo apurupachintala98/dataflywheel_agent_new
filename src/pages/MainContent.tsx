@@ -144,6 +144,8 @@ const MainContent = ({
   isReset,
   vegaChartData,
   setVegaChartData,
+  agentPresent,
+  setAgentPresent,
 }: MainContentProps) => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const [error, setError] = useState("");
@@ -163,7 +165,6 @@ const MainContent = ({
   const [availableSchemas, setAvailableSchemas] = useState<string[]>([]);
   const [selectedSchema, setSelectedSchema] = useState<string>("");
 
-  const [agentPresent, setAgentPresent] = useState<string>("")
   const [agentList, setAgentList] = useState<string[]>([])
   const [selectedAgent, setSelectedAgent] = useState<string>("")
   const [agentAnchorEl, setAgentAnchorEl] = useState<HTMLElement | null>(null)

@@ -290,8 +290,13 @@ const SQLCodeBlock = ({ code }) => {
 const MessageWithFeedback = ({ message }) => {
   console.log("msg", message);
 const isUser = useMemo(() => {
-    return message.fromUser === true || message.type === "user"
-  }, [message.fromUser, message.type])
+    // Check type first as it's more reliable, then fallback to fromUser
+    if (message.type === "user") return true
+    if (message.type === "assistant") return false
+    // Fallback to fromUser property
+    return message.fromUser === true
+  }, [message.type, message.fromUser])
+
   console.log(isUser);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");

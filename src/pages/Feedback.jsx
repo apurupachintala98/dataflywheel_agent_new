@@ -900,7 +900,7 @@ Feedback.propTypes = {
 MessageWithFeedback.propTypes = {
   message: PropTypes.shape({
     text: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    type: PropTypes.oneOf(["text", "sql", "table"]),
+    type: PropTypes.oneOf(["text", "sql", "table", "user", "assistant"]),
     fromUser: PropTypes.bool,
     summarized: PropTypes.bool,
     streaming: PropTypes.bool,
@@ -915,6 +915,11 @@ MessageWithFeedback.propTypes = {
       PropTypes.object,
       PropTypes.string,
     ]),
+    thinking: PropTypes.string,             
+    isStreaming: PropTypes.bool,             
+    content: PropTypes.string,               
+    chart: PropTypes.string,                
   }).isRequired,
   handleGraphClick: PropTypes.func,
 };
+

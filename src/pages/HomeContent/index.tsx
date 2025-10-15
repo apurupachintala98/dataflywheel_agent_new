@@ -310,7 +310,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         let finalText = "";
         let chartSpec = ""
 
-        while (true) {
+       while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 

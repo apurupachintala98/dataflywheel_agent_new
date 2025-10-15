@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Button, Box, IconButton, Typography, Tooltip, TextField } from "@mui/material";
+import { Button, Box, IconButton, Typography, Tooltip, TextField, Tabs, Tab } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditIcon from "@mui/icons-material/Edit";
@@ -21,18 +21,6 @@ import { ChevronDown } from "lucide-react";
 import { VegaLite } from 'react-vega';
 import loading from "assests/images/loading.png";
 import { CssTextField, Loader } from "./styled.components";
-import { Tabs, Tab } from "@mui/material";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper
-} from "@mui/material";
-
 
 const Feedback = ({ message }) => {
   const { selectedAppId } = useSelectedApp();
@@ -896,6 +884,16 @@ Feedback.propTypes = {
     fdbck_id: PropTypes.string,
     session_id: PropTypes.string,
   }).isRequired,
+};
+
+Feedback.propTypes = {
+  code: PropTypes.string,
+  message: PropTypes.shape({
+    content: PropTypes.string,
+    thinking: PropTypes.string,
+    isStreaming: PropTypes.bool,
+    chart: PropTypes.object,
+  }),
 };
 
 MessageWithFeedback.propTypes = {

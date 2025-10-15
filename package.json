@@ -48,7 +48,7 @@
     "clean": "rm -rf build && rm -rf node_modules rm -r package-lock.json",
     "start": "env-cmd -f .env.staging react-scripts start",
     "build:staging": "env-cmd -f .env.staging react-scripts build",
-    "build:production": "env-cmd -f .env.production react-scripts build",
+    "build:production": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint ./src/**/*.{js,ts,tsx}",
@@ -75,8 +75,12 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-class-properties": "^7.27.1",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1",
+    "@babel/plugin-transform-optional-chaining": "^7.27.1",
     "@commitlint/config-conventional": "^19.0.3",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.1",
+    "@rollup/plugin-terser": "^0.4.4",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
     "@testing-library/user-event": "^14.5.2",

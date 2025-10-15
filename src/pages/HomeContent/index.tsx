@@ -310,9 +310,14 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         let finalText = "";
         let chartSpec = ""
 
-       while (true) {
+        let isReading = true;
+
+        while (isReading) {
             const { done, value } = await reader.read();
-            if (done) break;
+            if (done) {
+                isReading = false;
+                break;
+            }
 
             buffer += decoder.decode(value, { stream: true });
             const lines = buffer.split("\n");

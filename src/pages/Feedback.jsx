@@ -13,7 +13,6 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import axios from "axios";
 import { config } from "../hooks/config";
 import { toast } from "react-toastify";
-import { FirstMessageCon, SecondMessageCon, MessageContainer } from "./styled.components";
 import DataFlyWheelLogo from "assests/images/loadingBlack.png";
 import { useSelectedApp } from "components/SelectedAppContext";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion"
@@ -231,6 +230,14 @@ const Feedback = ({ message }) => {
   );
 };
 
+Feedback.propTypes = {
+  message: PropTypes.shape({
+    text: PropTypes.string,
+    fdbck_id: PropTypes.string,
+    session_id: PropTypes.string,
+  }).isRequired,
+};
+
 const SQLCodeBlock = ({ code }) => {
   const [copied, setCopied] = useState(false);
 
@@ -272,6 +279,10 @@ const SQLCodeBlock = ({ code }) => {
       </SyntaxHighlighter>
     </div>
   );
+};
+
+SQLCodeBlock.propTypes = {
+  code: PropTypes.string.isRequired,
 };
 
 const MessageWithFeedback = ({ message }) => {
@@ -886,16 +897,6 @@ Feedback.propTypes = {
   }).isRequired,
 };
 
-Feedback.propTypes = {
-  code: PropTypes.string,
-  message: PropTypes.shape({
-    content: PropTypes.string,
-    thinking: PropTypes.string,
-    isStreaming: PropTypes.bool,
-    chart: PropTypes.object,
-  }),
-};
-
 MessageWithFeedback.propTypes = {
   message: PropTypes.shape({
     text: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
@@ -915,7 +916,5 @@ MessageWithFeedback.propTypes = {
       PropTypes.string,
     ]),
   }).isRequired,
-  executeSQL: PropTypes.func.isRequired,
-  apiCortex: PropTypes.func.isRequired,
   handleGraphClick: PropTypes.func,
 };

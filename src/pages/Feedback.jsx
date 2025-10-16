@@ -623,7 +623,37 @@ const MessageWithFeedback = ({ message }) => {
     <div className="w-full my-3">
       {/* Each message row is full width */}
       <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-        {isUser ? (
+
+        {message.isError ? (
+        <div
+          className="max-w-[80%] bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-2xl shadow-md animate-shake"
+          role="alert"
+        >
+          <strong className="font-semibold block mb-1">⚠️ Backend Error:</strong>
+          <span>{message.content}</span>
+
+          {/* Inline animation */}
+          <style jsx>{`
+            @keyframes shake {
+              0%, 100% {
+                transform: translateX(0);
+              }
+              25% {
+                transform: translateX(-5px);
+              }
+              50% {
+                transform: translateX(5px);
+              }
+              75% {
+                transform: translateX(-3px);
+              }
+            }
+            .animate-shake {
+              animation: shake 0.3s ease;
+            }
+          `}</style>
+        </div>
+      ) : isUser ? (
           // USER MESSAGE (Right-aligned)
           <div className="bg-blue-500 text-white px-4 py-3 rounded-2xl shadow-md rounded-br-none text-sm max-w-[80%] whitespace-pre-wrap">
             {message.text}

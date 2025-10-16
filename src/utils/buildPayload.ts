@@ -9,6 +9,7 @@ type BasePayloadParams = {
   user_nm?: string;
   user_pwd?: string;
   app_lvl_prefix?: string;
+  thread_id?: number;
 };
 
 type MinimalPayloadParams = BasePayloadParams & {
@@ -30,7 +31,7 @@ type FullPayloadParams = BasePayloadParams & {
 };
 
 export const buildPayload = (params: MinimalPayloadParams | FullPayloadParams & { app_lvl_prefix?: string }) => {
-  const { selectedAppId, sessionId, database_nm, schema_nm, stage_nm, user_nm, user_pwd } = params;
+  const { selectedAppId, sessionId, database_nm, schema_nm, stage_nm, user_nm, user_pwd, thread_id } = params;
 
   // Pass selectedAppId to config so it returns the correct APP_CONFIG
   const { APP_CONFIG } = config();
@@ -111,6 +112,7 @@ export const buildPayload = (params: MinimalPayloadParams | FullPayloadParams & 
       stage_nm,
       user_nm,
       user_pwd,
+      thread_id
     },
   };
 };

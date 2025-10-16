@@ -26,6 +26,8 @@ export const config = (
       SCHEMA_NAME: "schema_nm",
       STAGE_NAME: "",
       APP_LVL_PREFIX: appLvlPrefix,
+      user_nm: "user_nm",
+      threadId:"thread_id"
     },
 
     ENDPOINTS: {
@@ -44,7 +46,7 @@ export const config = (
       GET_VEGALITE_JSON: "txt2sql/generate_vega_lite_json",
       GET_AGENT_LIST: "get_agent_lst",
       AGENT_WO_RUN: "agent_wo_run",
-      
+      CREATE_AGENT_THREAD: "create_agent_thread", //  Add this line
     }
   }
 };

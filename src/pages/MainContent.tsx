@@ -97,6 +97,11 @@ interface MainContentProps {
   setAgentPresent: React.Dispatch<React.SetStateAction<string>>
   selectedAgent: string
   setSelectedAgent: React.Dispatch<React.SetStateAction<string>>
+  setThreadId: React.Dispatch<React.SetStateAction<number | null>>;
+  selectedSchema: string;
+  setSelectedSchema: React.Dispatch<React.SetStateAction<string>>;
+  handleSchemaSelect: (schema: string) => void;
+  threadId: number | null;
 }
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -148,6 +153,9 @@ const MainContent = ({
   setAgentPresent,
   selectedAgent,
   setSelectedAgent,
+  handleSchemaSelect,
+  threadId,
+  setThreadId
 }: MainContentProps) => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const [error, setError] = useState("");
@@ -170,7 +178,7 @@ const MainContent = ({
   const [agentList, setAgentList] = useState<string[]>([])
   const [agentAnchorEl, setAgentAnchorEl] = useState<HTMLElement | null>(null)
   const [agentListAnchorEl, setAgentListAnchorEl] = useState<HTMLElement | null>(null)
-   const [showPromptNotification, setShowPromptNotification] = useState(false)
+  const [showPromptNotification, setShowPromptNotification] = useState(false)
 
   const DEBOUNCE_DELAY = 1500;
   const aplctnCdValue =
@@ -298,7 +306,7 @@ const MainContent = ({
     }
   };
 
-   const fetchAgentList = async () => {
+  const fetchAgentList = async () => {
     const payload = {
       query: {
         aplctn_cd: aplctnCdValue,
@@ -424,8 +432,8 @@ const MainContent = ({
                   />
                 </>
               )}
-          
-               {/* Schema Dropdown */}
+
+              {/* Schema Dropdown */}
               {availableSchemas.length > 0 && (
                 <Box sx={{ display: "inline-block" }}>
                   <Box
@@ -453,14 +461,56 @@ const MainContent = ({
                     {availableSchemas.map((schema) => (
                       <MenuItem
                         key={schema}
-                        onClick={() => {
-                          setSelectedSchema(schema)
-                          setDbDetails({ database_nm: dbDetails.database_nm, schema_nm: schema })
-                          setAgentPresent("")
-                          setSelectedAgent("")
-                          setAgentList([])
-                          handleMenuClose()
+                        // onClick={() => {
+                        //   setSelectedSchema(schema)
+                        //   setDbDetails({ database_nm: dbDetails.database_nm, schema_nm: schema })
+                        //   setAgentPresent("")
+                        //   setSelectedAgent("")
+                        //   setAgentList([])
+                        //   handleMenuClose()
+                        // }}
+                        
+                        onClick={async () => {
+                          setSelectedSchema(schema);
+                          setDbDetails({ database_nm: dbDetails.database_nm, schema_nm: schema });
+                          setAgentPresent("");
+                          setSelectedAgent("");
+                          setAgentList([]);
+                          handleMenuClose();
+                        
+                          try {
+                            const payload = {
+                              query: {
+                                aplctn_cd: aplctnCdValue,
+                                app_id: APP_ID,
+                                api_key: API_KEY,
+                                app_lvl_prefix: appLvlPrefix,
+                                session_id: sessionId,
+                                user_nm: user_nm,
+                              },
+                            };
+                        
+                            const response = await axios.post(
+                              `${API_BASE_URL}${ENDPOINTS.CREATE_AGENT_THREAD}`,
+                              payload,
+                              {
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                              }
+                            );
+                        
+                            if (response.status === 200 && response.data?.thread_id) {
+                              console.log("Agent thread created:", response.data.thread_id);
+                              setThreadId(response.data.thread_id); // ✅ THIS LINE IS MISSING
+                            } else {
+                              console.warn("Agent thread creation failed:", response.data);
+                            }
+                          } catch (error) {
+                            console.error("Error creating agent thread:", error);
+                          }
                         }}
+                      
                       >
                         {schema}
                       </MenuItem>
@@ -1054,6 +1104,7 @@ const MainContent = ({
                         handleSubmit();
                       }
                     }}
+                    // disabled={threadId === null}
                     variant="standard"
                     placeholder="Ask anything"
                     sx={{

@@ -81,6 +81,8 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
     const [user_nm, setUserNm] = useState("");
     const [user_pwd, setUserPwd] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null)
+    const [threadId, setThreadId] = useState<number | null>(null);
+    const [selectedSchema, setSelectedSchema] = useState<string>("");
 
     const [anchorEls, setAnchorEls] = useState<AnchorElState>({
         account: null,
@@ -149,6 +151,42 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                 : [...prev[type as keyof SelectedModelState], file],
         }));
     };
+
+    const handleSchemaSelect = async (schema: string) => {
+        setSelectedSchema(schema);
+        setDbDetails({ database_nm: dbDetails.database_nm, schema_nm: schema });
+      
+        try {
+          const payload = {
+            query: {
+              aplctn_cd: aplctnCdValue,
+              app_id: APP_ID,
+              api_key: API_KEY,
+              app_lvl_prefix: appLvlPrefix,
+              session_id: sessionId,
+              user_nm: user_nm,
+            },
+          };
+      
+          const response = await axios.post(
+            `${API_BASE_URL}${ENDPOINTS.CREATE_AGENT_THREAD}`,
+            payload,
+            { headers: { "Content-Type": "application/json" } }
+          );
+      
+          if (response.status === 200 && response.data?.thread_id) {
+            setThreadId(response.data.thread_id);
+            console.log("Thread ID created:", response.data.thread_id);
+          } else {
+            console.warn("Thread creation failed:", response.data);
+          }
+        } catch (error) {
+          console.error("Error creating agent thread:", error);
+        }
+      };
+      
+
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
         setInputValue(e.target.value);
 
@@ -253,7 +291,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                     database_nm: dbDetails.database_nm,
                     schema_nm: dbDetails.schema_nm,
                     agent_nm: selectedAgent,
-                    thread_id: 0,
+                    thread_id: threadId,
                     parent_message_id: 0,
                     prompt: {
                         messages: [
@@ -278,6 +316,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
                 database_nm: dbDetails.database_nm,
                 schema_nm: dbDetails.schema_nm,
                 app_lvl_prefix: appLvlPrefix,
+                thread_id: threadId ?? undefined, //fix
             })
             endpoint = ENDPOINTS.AGENT ? `${API_BASE_URL}${ENDPOINTS.AGENT}` : `${API_BASE_URL}${ENDPOINTS.TEXT_TO_SQL}`
         }
@@ -754,6 +793,8 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         );
     };
 
+    
+
     return (
         <MainContent
             collapsed={collapsed}
@@ -798,6 +839,11 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             setAgentPresent={setAgentPresent}
             selectedAgent={selectedAgent}
             setSelectedAgent={setSelectedAgent}
+            threadId={threadId}
+            setThreadId={setThreadId}
+            setSelectedSchema={setSelectedSchema}
+            selectedSchema={selectedSchema}
+            handleSchemaSelect={handleSchemaSelect}
         />
     );
 };

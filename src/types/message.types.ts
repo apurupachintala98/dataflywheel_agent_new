@@ -22,7 +22,7 @@
 export interface MessageType {
   // --- new fields (for streaming & unified messages) ---
   id: string;                         // unique ID for each message
-  type: "user" | "assistant";         // who sent it
+  type: "user" | "assistant" | "error";         // who sent it
   content?: string;                   // new style text field
   thinking?: string;                  // assistant "thinking"
   sql?: string;                       // SQL queries
@@ -45,4 +45,5 @@ export interface MessageType {
   showSummarize?: boolean;
   showFeedback?: boolean;
   prompt?: string;
+  isError?: boolean; 
 }

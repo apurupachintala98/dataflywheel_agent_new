@@ -330,13 +330,76 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             body: JSON.stringify(payload),
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        
+ if (!response.ok) {
+    try {
+      const errorData = await response.json()
 
-        if (!response.body) {
-            throw new Error("No response body");
+      let errorMessage = "An error occurred while processing your request."
+
+      if (errorData.error) {
+        try {
+          const parsedError = typeof errorData.error === "string" ? JSON.parse(errorData.error) : errorData.error
+
+          errorMessage = parsedError.message || errorMessage
+        } catch (parseError) {
+          errorMessage = errorData.error
         }
+      } else if (errorData.message) {
+        errorMessage = errorData.message
+      }
+
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          backgroundColor: "#dc2626",
+          color: "#ffffff",
+          fontWeight: 500,
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+        },
+      })
+
+      throw new Error(errorMessage)
+    } catch (error) {
+      if (error instanceof Error && error.message !== `HTTP error! status: ${response.status}`) {
+        throw error
+      }
+
+      const fallbackMessage = `Server error: ${response.status}`
+      toast.error(fallbackMessage, {
+        position: "top-right",
+        autoClose: 5000,
+        style: {
+          backgroundColor: "#dc2626",
+          color: "#ffffff",
+          fontWeight: 500,
+          borderRadius: "8px",
+        },
+      })
+      throw new Error(fallbackMessage)
+    }
+  }
+
+  if (!response.body) {
+    const errorMsg = "No response body"
+    toast.error(errorMsg, {
+      position: "top-right",
+      autoClose: 5000,
+      style: {
+        backgroundColor: "#dc2626",
+        color: "#ffffff",
+        fontWeight: 500,
+        borderRadius: "8px",
+      },
+    })
+    throw new Error(errorMsg)
+  }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -368,6 +431,39 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
 
                 const parsed = parseStreamEvent(trimmedLine);
                 if (!parsed) continue;
+
+                 if (parsed.event === "error" || (parsed.data && parsed.data.error)) {
+        let errorMessage = "An error occurred during streaming."
+
+        try {
+          const errorData = parsed.data?.error || parsed.data
+          const parsedError = typeof errorData === "string" ? JSON.parse(errorData) : errorData
+
+          errorMessage = parsedError.message || errorMessage
+        } catch (parseError) {
+          errorMessage = parsed.data?.error || errorMessage
+        }
+
+        toast.error(errorMessage, {
+          position: "top-right",
+          autoClose: 5000,
+          style: {
+            backgroundColor: "#dc2626",
+            color: "#ffffff",
+            fontWeight: 500,
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+          },
+        })
+
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === messageId ? { ...msg, content: `⚠️ ${errorMessage}`, isStreaming: false } : msg,
+          ),
+        )
+
+        return
+      }
 
                 if (parsed.event !== "data") {
                     currentEvent = parsed.event;

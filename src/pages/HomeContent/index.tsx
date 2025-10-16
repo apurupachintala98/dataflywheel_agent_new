@@ -164,7 +164,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
               api_key: API_KEY,
               app_lvl_prefix: appLvlPrefix,
               session_id: sessionId,
-              user_nm: user_nm,
+              user_nm,
             },
           };
       

@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import { FaArrowUp, FaUserCircle, FaAngleDown } from "react-icons/fa";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { HashLoader } from "react-spinners";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import CloseIcon from "@mui/icons-material/Close";
@@ -35,7 +35,6 @@ import ApiService from "../services/index";
 import { CssTextField, Loader } from "./styled.components";
 import loading from "assests/images/loading.png";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { toast } from "react-toastify";
 
 interface MainContentProps {
   messages: MessageType[];

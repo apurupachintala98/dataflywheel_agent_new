@@ -83,6 +83,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const [threadId, setThreadId] = useState<number | null>(null);
     const [selectedSchema, setSelectedSchema] = useState<string>("");
+    const [globalError, setGlobalError] = useState<string | null>(null);
 
     const [anchorEls, setAnchorEls] = useState<AnchorElState>({
         account: null,
@@ -155,36 +156,36 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
     const handleSchemaSelect = async (schema: string) => {
         setSelectedSchema(schema);
         setDbDetails({ database_nm: dbDetails.database_nm, schema_nm: schema });
-      
+
         try {
-          const payload = {
-            query: {
-              aplctn_cd: aplctnCdValue,
-              app_id: APP_ID,
-              api_key: API_KEY,
-              app_lvl_prefix: appLvlPrefix,
-              session_id: sessionId,
-              user_nm,
-            },
-          };
-      
-          const response = await axios.post(
-            `${API_BASE_URL}${ENDPOINTS.CREATE_AGENT_THREAD}`,
-            payload,
-            { headers: { "Content-Type": "application/json" } }
-          );
-      
-          if (response.status === 200 && response.data?.thread_id) {
-            setThreadId(response.data.thread_id);
-            console.log("Thread ID created:", response.data.thread_id);
-          } else {
-            console.warn("Thread creation failed:", response.data);
-          }
+            const payload = {
+                query: {
+                    aplctn_cd: aplctnCdValue,
+                    app_id: APP_ID,
+                    api_key: API_KEY,
+                    app_lvl_prefix: appLvlPrefix,
+                    session_id: sessionId,
+                    user_nm,
+                },
+            };
+
+            const response = await axios.post(
+                `${API_BASE_URL}${ENDPOINTS.CREATE_AGENT_THREAD}`,
+                payload,
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            if (response.status === 200 && response.data?.thread_id) {
+                setThreadId(response.data.thread_id);
+                console.log("Thread ID created:", response.data.thread_id);
+            } else {
+                console.warn("Thread creation failed:", response.data);
+            }
         } catch (error) {
-          console.error("Error creating agent thread:", error);
+            console.error("Error creating agent thread:", error);
         }
-      };
-      
+    };
+
 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -252,17 +253,19 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         setInputValue("");
         setIsLoading(true);
         setSubmitted(true);
+        setGlobalError(null); // Clear previous error
 
         try {
             await simulateStreamingResponse(assistantMessage.id, userMessage.content);
         } catch (error) {
             console.error("Streaming error:", error);
+            const errorMessage = error instanceof Error ? error.message : "Error occurred while processing your request."
             setMessages((prev) =>
                 prev.map((msg) =>
                     msg.id === assistantMessage.id
                         ? {
                             ...msg,
-                            content: "Error occurred while processing your request.",
+                            content: `${errorMessage}`,
                             isStreaming: false,
                             fromUser: false,
                         }
@@ -330,12 +333,157 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             body: JSON.stringify(payload),
         });
 
+        //new changes for error
+        // Clone the response to check for embedded errors before streaming
+        const clonedResponse = response.clone();
+        try {
+            const json = await clonedResponse.json();
+            if (json.error) {
+                let errorMessage = "An error occurred.";
+
+                try {
+                    const parsedError = JSON.parse(json.error);
+                    errorMessage = parsedError.message || parsedError.error || errorMessage;
+                } catch {
+                    errorMessage = typeof json.error === "string" ? json.error : errorMessage;
+                }
+
+                // Show error in UI
+                // setMessages((prev) => [
+                //     ...prev,
+                //     {
+                //         id: `error-${Date.now()}`,
+                //         type: "error",
+                //         fromUser: false,
+                //         content: errorMessage,
+                //         isStreaming: false,
+                //         isError: true,
+                //     },
+
+                // ]);
+
+                // toast.error(errorMessage, {
+                //     position: "top-right",
+                //     autoClose: 5000,
+                //     hideProgressBar: false,
+                //     closeOnClick: true,
+                //     pauseOnHover: true,
+                //     draggable: true,
+                //     style: {
+                //         backgroundColor: "#dc2626",
+                //         color: "#ffffff",
+                //         fontWeight: 500,
+                //         borderRadius: "8px",
+                //         boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+                //     },
+                // }
+                // );
+                if (errorMessage) {
+                    setGlobalError(errorMessage); // Set global error
+
+                    // toast.error(errorMessage, {
+                    //     position: "top-right",
+                    //     autoClose: 5000,
+                    //     hideProgressBar: false,
+                    //     closeOnClick: true,
+                    //     pauseOnHover: true,
+                    //     draggable: true,
+                    //     style: {
+                    //         backgroundColor: "#dc2626",
+                    //         color: "#ffffff",
+                    //         fontWeight: 500,
+                    //         borderRadius: "8px",
+                    //         boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+                    //     },
+                    // });
+                }
+
+                throw new Error(errorMessage);
+            }
+        } catch (e) {
+            console.warn("Could not parse JSON for error check:", e);
+        }
+
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            let errorMessage = "An error occurred while processing your request."
+
+            try {
+                const errorData = await response.json();
+                if (typeof errorData.error === "string") {
+                    try {
+                        const parsedError = JSON.parse(errorData.error);
+                        errorMessage = parsedError.message || parsedError.error || errorMessage;
+                    } catch {
+                        errorMessage = errorData.error
+                    }
+                } else if (errorData.error?.message) {
+                    errorMessage = errorData.error.message;
+                } else if (errorData.message) {
+                    errorMessage = errorData.message;
+                }
+
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        id: `error-${Date.now()}`,
+                        type: "error",
+                        fromUser: false,
+                        content: errorMessage,
+                        isStreaming: false,
+                        isError: true,
+                    },
+
+                ]);
+
+
+                toast.error(errorMessage, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    style: {
+                        backgroundColor: "#dc2626",
+                        color: "#ffffff",
+                        fontWeight: 500,
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+                    },
+                })
+
+                throw new Error(errorMessage)
+            } catch (error) {
+                const fallbackMessage = `Server error: ${response.status}`;
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        id: `error-${Date.now()}`,
+                        type: "error",
+                        fromUser: false,
+                        content: fallbackMessage,
+                        isStreaming: false,
+                        isError: true,
+                    },
+                ]);
+                throw new Error(fallbackMessage);
+            }
         }
 
         if (!response.body) {
-            throw new Error("No response body");
+            const errorMsg = "No response body"
+            toast.error(errorMsg, {
+                position: "top-right",
+                autoClose: 5000,
+                style: {
+                    backgroundColor: "#dc2626",
+                    color: "#ffffff",
+                    fontWeight: 500,
+                    borderRadius: "8px",
+                },
+            })
+            throw new Error(errorMsg)
         }
 
         const reader = response.body.getReader();
@@ -368,6 +516,35 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
 
                 const parsed = parseStreamEvent(trimmedLine);
                 if (!parsed) continue;
+
+                if (parsed.event === "error" || (parsed.data?.error)) {
+                    let errorMessage = "An error occurred during streaming."
+
+                    try {
+                        const errorData = parsed.data?.error || parsed.data
+                        const parsedError = typeof errorData === "string" ? JSON.parse(errorData) : errorData
+
+                        errorMessage = parsedError.message || parsedError.error || errorMessage;
+                    } catch {
+                        errorMessage = parsed.data?.error || errorMessage
+                    }
+
+
+                    setMessages((prev) => [
+                        ...prev,
+                        {
+                            id: `error-${Date.now()}`,
+                            type: "error",
+                            fromUser: false,
+                            content: errorMessage,
+                            isStreaming: false,
+                            isError: true,
+                        },
+                    ]);
+
+
+                    return
+                }
 
                 if (parsed.event !== "data") {
                     currentEvent = parsed.event;
@@ -793,7 +970,7 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
         );
     };
 
-    
+
 
     return (
         <MainContent
@@ -844,6 +1021,9 @@ const HomeContent = ({ isReset, promptValue, recentValue, isLogOut, setCheckIsLo
             setSelectedSchema={setSelectedSchema}
             selectedSchema={selectedSchema}
             handleSchemaSelect={handleSchemaSelect}
+            globalError={globalError}
+            setGlobalError={setGlobalError}
+
         />
     );
 };

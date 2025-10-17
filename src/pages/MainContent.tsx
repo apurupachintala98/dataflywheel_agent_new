@@ -35,6 +35,7 @@ import ApiService from "../services/index";
 import { CssTextField, Loader } from "./styled.components";
 import loading from "assests/images/loading.png";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { toast } from "react-toastify";
 
 interface MainContentProps {
   messages: MessageType[];
@@ -102,6 +103,10 @@ interface MainContentProps {
   setSelectedSchema: React.Dispatch<React.SetStateAction<string>>;
   handleSchemaSelect: (schema: string) => void;
   threadId: number | null;
+
+  globalError: string | null;
+  setGlobalError?: React.Dispatch<React.SetStateAction<string | null>>;
+
 }
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -155,7 +160,9 @@ const MainContent = ({
   setSelectedAgent,
   handleSchemaSelect,
   threadId,
-  setThreadId
+  setThreadId,
+  globalError, 
+  setGlobalError
 }: MainContentProps) => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const [error, setError] = useState("");
@@ -179,6 +186,9 @@ const MainContent = ({
   const [agentAnchorEl, setAgentAnchorEl] = useState<HTMLElement | null>(null)
   const [agentListAnchorEl, setAgentListAnchorEl] = useState<HTMLElement | null>(null)
   const [showPromptNotification, setShowPromptNotification] = useState(false)
+  const [openError, setOpenError] = useState(false);
+  const lastErrorRef = useRef<string | null>(null);
+
 
   const DEBOUNCE_DELAY = 1500;
   const aplctnCdValue =
@@ -358,6 +368,76 @@ const MainContent = ({
     }
   }, [isLogOut]);
 
+
+  //new changes for error 
+  // useEffect(() => {
+  //   if (globalError) {
+  //     toast.dismiss(); // Dismiss any existing toasts
+  //     toast.error(globalError, {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       style: {
+  //         backgroundColor: "#dc2626",
+  //         color: "#ffffff",
+  //         fontWeight: 500,
+  //         borderRadius: "8px",
+  //         boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+  //       },
+  //     });
+  
+  //     if (setGlobalError) {
+  //       setGlobalError(null); // Clear after showing
+  //     }
+  //   }
+  // }, [globalError]);
+  useEffect(() => {
+    if (globalError) {
+      toast.dismiss(); // Dismiss any existing toasts
+  
+      toast.error(globalError, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          backgroundColor: "#ffffff", // White background
+          color: "#dc2626",           // Red text
+          fontWeight: 500,
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(220, 38, 38, 0.2)", // Softer red shadow
+        },
+      });
+  
+      if (setGlobalError) {
+        setGlobalError(null); // Clear after showing
+      }
+    }
+  }, [globalError]);
+
+  const handleCloseError = () => {
+    setOpenError(false);
+    if (setGlobalError) {
+      setGlobalError(null); //  Use directly, not props.setGlobalError
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      toast.dismiss();
+    };
+  
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />
@@ -469,7 +549,7 @@ const MainContent = ({
                         //   setAgentList([])
                         //   handleMenuClose()
                         // }}
-                        
+
                         onClick={async () => {
                           setSelectedSchema(schema);
                           setDbDetails({ database_nm: dbDetails.database_nm, schema_nm: schema });
@@ -477,7 +557,7 @@ const MainContent = ({
                           setSelectedAgent("");
                           setAgentList([]);
                           handleMenuClose();
-                        
+
                           try {
                             const payload = {
                               query: {
@@ -489,7 +569,7 @@ const MainContent = ({
                                 user_nm,
                               },
                             };
-                        
+
                             const response = await axios.post(
                               `${API_BASE_URL}${ENDPOINTS.CREATE_AGENT_THREAD}`,
                               payload,
@@ -499,7 +579,7 @@ const MainContent = ({
                                 },
                               }
                             );
-                        
+
                             if (response.status === 200 && response.data?.thread_id) {
                               console.log("Agent thread created:", response.data.thread_id);
                               setThreadId(response.data.thread_id); // ✅ THIS LINE IS MISSING
@@ -510,7 +590,7 @@ const MainContent = ({
                             console.error("Error creating agent thread:", error);
                           }
                         }}
-                      
+
                       >
                         {schema}
                       </MenuItem>
@@ -1256,8 +1336,6 @@ const MainContent = ({
         <Dialog open={chartOpen} onClose={() => setChartOpen(false)} maxWidth="lg" fullWidth>
           <Chart chartData={vegaChartData} onClose={() => setChartOpen(false)} />
         </Dialog>
-
-
 
       </Box>
     </>

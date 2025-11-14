@@ -171,6 +171,30 @@ function Home() {
                   <img src={newChat} /> New Chat
                 </Button>
               </List>
+              <List>
+                <Button
+                  type="button"
+                  style={{
+                    backgroundColor: "#244179",
+                    color: "#ffffff",
+                    width: "57%",
+                    margin: "10px 0",
+                    padding: "10px 12px",
+                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "15px",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    border: "none",
+                  }}
+                  onClick={() => window.open("https://datascienceagent.edagenaidev.awsdns.internal.das/", "_blank")}
+                >
+                  Data Science Agent
+                </Button>
+              </List>
+
             </SideBar>
             <Divider />
 
